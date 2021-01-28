@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for ('static', filename='css/main.css') }}">
+    
+    <!--<link rel="stylesheet" href="./css/main.css" type="text/css"> -->
+        {% block head %} {% endblock %}
+</head>
+<body>
+    <div class="banner">
+        <h1>Labels Suit Agency <img id ="logo-tick" src=./resources/images/Logo.png alt=""> </h1>
+        <!-- nav bar and logo-->
+    </div>
+
+    <ul>
+        <li><a href="/loggedin">Home</a></li>
+        <li><a href="/userpage">Users</a></li>
+        <li><a href="/solditems">Sold Items</a></li>
+        <li><a href="/listingpage">Listings</a></li>
+        <li><a href="/supplierpage">Suppliers</a></li>
+        <li><a href="/stockpage">Stock</a></li>
+        <li><a href="/customerpage">Customers</a></li>
+        <li><a href="/logoff">Log off</a></li>
+    </ul>
+    {% block body %} {% endblock %}
+</body>
+</html>
