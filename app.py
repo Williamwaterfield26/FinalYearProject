@@ -1,6 +1,9 @@
 from flask import Flask, render_template, url_for
+from forms import SignUpForm, SignInForm
+from flask_sqlalchemy import SQLAlchemy
 
 app= Flask (__name__)
+app.config ['SECRET_KEY'] = 'bob'
 
 @app.route('/')
 def index():
@@ -8,11 +11,13 @@ def index():
 
 @app.route('/signin')
 def signin():
-    return render_template('signin.html')
+    form = SignInForm()
+    return render_template('signin.html', form=form)
 
-@app.route('/signup')
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    return render_template('signup.html')
+    form = SignUpForm()
+    return render_template('signup.html', form=form)
 
 
 @app.route('/preregistereduser')

@@ -1,35 +1,22 @@
-.banner{
-
-    text-align: center;
-    font-size:xx-large;
+nav{
+  text-align: left;
 }
 
-#logo-tick{
-    height: 180px;
-    width: 180px;
+nav a{
+  text-decoration: none;
+  padding: 1em;
+  color: black;
+  border-radius: 5px;
+
 }
 
-ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: rgb(3, 0, 0);
-  }
-  
-  li {
-    float: left;
-  }
-  
-  li a {
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-  }
-  
-  /* Change the link color to #111 (black) on hover */
-  li a:hover {
-    background-color: #111;
-  }
+nav a :last-child{
+  background: #ffffff;
+  color:white;
+}
+header{
+  text-align: center;
+}
+img{
+  border-radius: 50%;
+}

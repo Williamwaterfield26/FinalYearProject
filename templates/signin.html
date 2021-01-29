@@ -16,24 +16,22 @@
 
     </div>
 
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+   
 
-    <div class ="signin">
-        <label for="username">Username</label>
-        <input type="text"id="username" name="username">
-        <br>
-        <br>
-        <label for="password">Password</label>
-        <input type="text"id="password" name="password">
-        <br>
-        <br>
-        
-        <a href="./loggedin.html"><button>Submit</button></a>
-    </div>
+    <form action ="" method="">
+        <p>
+            {{form.username.label}} <br>
+            {{form.username(size=30)}}
+        </p>
+        <p>
+            {{form.password.label}} <br>
+            {{form.password(size=30)}}
+        </p>
+        <p>
+            {{form.submit}} <br>
+        </p>
+    
+    </form>
     <br>
     <br>
     <div class="back">
