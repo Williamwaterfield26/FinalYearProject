@@ -1,3 +1,4 @@
+{% import "bootstrap/wtf.html" as wtf %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,25 +14,11 @@
         
         <!-- add nav bar and log in sign up-->
     </div>
+    <br>
 
-    <form action ="" method="">
-        <p>
-            {{form.username.label}} <br>
-            {{form.username(size=30)}}
-        </p>
-        <p>
-            {{form.password.label}} <br>
-            {{form.password(size=30)}}
-        </p>
-        <p>
-            {{form.email.label}} <br>
-            {{form.email(size=30)}}
-        </p>
-        <p>
-            {{form.submit}} <br>
-        </p>
-    
-    </form>
+    {{wtf.quick_form(form)}}
+
+
     
     <div class="back">
         <a href="./index.html"><button>Back</button></a>

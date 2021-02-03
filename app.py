@@ -1,9 +1,13 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, redirect
 from forms import SignUpForm, SignInForm
+from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired
 
 app= Flask (__name__)
 app.config ['SECRET_KEY'] = 'bob'
+Bootstrap(app)
 
 @app.route('/')
 def index():

@@ -13,3 +13,5 @@ class SignInForm(FlaskForm):
     password = PasswordField('Password')
     submit = SubmitField('Sign In')
 
+class Customer(FlaskForm):
+    
