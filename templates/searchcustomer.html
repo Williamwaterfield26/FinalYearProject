@@ -1,0 +1,19 @@
+{% extends "base.html"%}
+
+{% block head %} 
+
+{% endblock %}
+
+{% block body %}
+{{ wtf.quick_form(form) }}
+<div class="row">
+    <input type="text" placeholder="=Search...">
+    <h3 class='text-muted' style="padding-left:20px;">Search result: <span class="text-{{color}}">{{ search_msg }}</span></h3>
+    <hr> {% include 'customerpage' %}
+</div>
+<a href="./editcustomer"><button>Edit Customer</button></a>
+<div class="back">
+    <a href="./customerpage.html"><button>Back</button></a>
+
+</div>
+{% endblock %}
