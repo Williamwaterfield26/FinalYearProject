@@ -108,14 +108,14 @@ class AddAdminForm(FlaskForm):
     submit = SubmitField('Sign Up')
     
 
-class CustomerSearchForm(FlaskForm):
-    choices = [('customerid', 'customerid'), ('customerfirstname'), ('customersurname', 'customersurname'), ('email','email')]
-    select = SelectField ('Search for a customer', choices=choices)
-    search = StringField('')
 # class CustomerSearchForm(FlaskForm):
-#     choices = [('customersurname', 'customersurname')]
+#     choices = [('customerid', 'customerid'), ('customerfirstname'), ('customersurname', 'customersurname'), ('email','email')]
 #     select = SelectField ('Search for a customer', choices=choices)
 #     search = StringField('')
+class CustomerSearchForm(FlaskForm):
+    choices = [('customersurname','customersurname')]
+    select = SelectField ('Search for a customer', choices=choices)
+    search = StringField('')
 
 
 class EditCustomerForm(FlaskForm):
@@ -132,3 +132,10 @@ class EditCustomerForm(FlaskForm):
     ])
     update = SubmitField('Update')
     cancel = SubmitField('Cancel')
+
+
+class DeleteCustomerForm(FlaskForm):
+    customerfirstname =('Customer Firstname')
+    customersurname =('Customer Surname')
+    email =('Email')
+    delete = SubmitField('Delete')

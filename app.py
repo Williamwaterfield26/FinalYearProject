@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, redirect, request, flash, Blueprint
-from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddAdminForm, CustomerSearchForm, EditCustomerForm
+from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddAdminForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -127,15 +127,40 @@ def customerpage():
         #return render_template('customerpage.html', search=search, form=form)
         return render_template('customerpage.html', form=search)
 
-#number 1
-# @app.route('/customerresults')
+# #number 1
+@app.route('/customerresults')
+def searchcustomerresults(search):
+        results = []
+        search_string = search.data['search']
+
+        if search.data['search']== '':
+                qry = db.session.query(customer)
+                results = qry.all()
+        if not results:
+                flash('No results found')
+                return redirect ('/customerpage')
+        else:
+                table = CustomerResults(results)
+                table.border = True
+                return render_template('results.html', table=table)
+
+
+
+# @app.route('/customerresults/<int:customerid>', methods=['GET', 'POST'])
 # def searchcustomerresults(search):
 #         results = []
 #         search_string = search.data['search']
-
-#         if search.data['search']== '':
-#                 qry = db.session.query(customer)
-#                 results = qry.all()
+#         if search_string:
+#                 if search.data['select']== 'customerid':
+#                         qry = db.session.query(customerid, customersurname).filter(customerfirstname==customersurname).filter(customer.customerid.contains(search_string))
+#                         results= [item[0] for item in qry.all()]
+#                 elif search.data ['select'] == 'customerfirstname':
+#                         qry = db.session.query(customerfirstname).filter(customerfirstname.customerfirstname.contains(search_string))
+#                         results = qry.all()
+#                 elif search.data ['select'] == 'customersurname':
+#                         qry = db.session.query(customersurname).filter(customersurname.customersurname.contains(search_string))
+#                         results = qry.all()
+                        
 #         if not results:
 #                 flash('No results found')
 #                 return redirect ('/customerpage')
@@ -146,29 +171,37 @@ def customerpage():
 
 
 
-@app.route('/customerresults')
-def searchcustomerresults(search):
-        results = []
-        search_string = search.data['search']
-        if search_string:
-                if search.data['select']== 'customerid':
-                        qry = db.session.query(customerid, customersurname).filter(customerfirstname==customersurname).filter(customer.customerid.contains(search_string))
-                        results= [item[0] for item in qry.all()]
-                elif search.data ['select'] == 'customerfirstname':
-                        qry = db.session.query(customerfirstname).filter(customerfirstname.customerfirstname.contains(search_string))
-                        results = qry.all()
-                elif search.data ['select'] == 'customersurname':
-                        qry = db.session.query(customersurname).filter(customersurname.customersurname.contains(search_string))
-                        results = qry.all()
-                        
-        if not results:
-                flash('No results found')
-                return redirect ('/customerpage')
-        else:
-                table = CustomerResults(results)
-                table.border = True
-                return render_template('results.html', table=table)
 
+
+
+
+#@app.route('/editcustomer',methods=['GET', 'POST'])
+@app.route('/editcustomer/<int:customerid>', methods=['GET', 'POST'])
+#@app.route('/editcustomer/<customerid>',methods=['GET', 'POST'])
+def editcustomer(customerid):
+        qry = db.session.query(customer).filter( customer.customerid == customerid)
+        customersurname = qry.first()
+        if customersurname:
+                form = EditCustomerForm(formdata=request.form, obj = customersurname)
+                if request.method == 'POST' and form.validate():
+                        save_customer(customersurname,form)
+
+                        flash ('Customer updated!')
+                        return redirect ('/customerpage')
+                return render_template('customerpage.html', form=form)
+        else:
+                return 'Error loading the customer'.format(customerid=customerid)
+#</int:customerid>
+
+
+def save_customer(customersurname, form, new=False):
+        customersurname.customerfirstname = form.customerfirstname.data
+        customersurname.customersurname = form.customersurname.data
+        customersurname.email = form.email.data
+
+        if new:
+                db.session.add(customersurname)
+        db.session.commit()
 
 
 
@@ -299,16 +332,22 @@ def addcustomer():
 
 
 
-
-
-# Delete customer
-@app.route('/deletecustomer', methods=['GET','POST'])
+# Delete customer from database which matches the ID
+@app.route('/deletecustomer/<int:customerid>', methods=['GET','POST'])
 def deletecustomer(customerid):
-        if customer.query.filter_by(customerid=customerid).delete():
-                db.session.commit()
-                flash('Customer has been deleted','Success')
-                return redirect(url_for('customerpage.html'))
-        return redirect(url_for('deletecustomer.html', customerid = customerid))
+        qry = db.session.query(customer).filter(customer.customerid==customerid)
+        customersurname = qry.first()
+        if customersurname:
+                form = DeleteCustomerForm(formdata=request.form, obj=customer)
+                if request.method == 'POST' and form.validate():
+                        db.session.delete(customersurname)
+                        db.session.commit()
+                        flash('Customer deleted successfully!')
+                        return redirect('/customerpage')
+                return render_template('deletecustomer.html', form=form)
+        else:
+                return 'Error deleting customer'.format (customerid=customerid)
+
 
 
 # @app.route('/editcustomer')

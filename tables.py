@@ -1,4 +1,4 @@
-from flask_table import Table, Col
+from flask_table import Table, Col, LinkCol
 
 
 class CustomerResults(Table):
@@ -6,3 +6,6 @@ class CustomerResults(Table):
         customerfirstname = Col('customerfirstname')
         customersurname = Col('customersurname')
         email = Col('email')
+        edit = LinkCol('Edit', 'editcustomer', url_kwargs=dict(customerid='customerid'))
+        delete = LinkCol('Delete', 'deletecustomer', url_kwargs=dict(customerid='customerid'))
+        

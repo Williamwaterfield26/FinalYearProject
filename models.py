@@ -9,16 +9,16 @@ from wtforms import StringField, PasswordField, SubmitField, HiddenField, Intege
 from wtforms.validators import DataRequired, InputRequired, Length, Regexp, NumberRange
 
 
-#class customer(db.model):
-#    __tablename__ = 'customers'
-#    customerid = db.Column(db.Integer, primary_key = True)
-#    customerfirstname = db.Column(db.String(20))
-#    customersurname = db.Column(db.String(20))
-#    email = db.Column(db.String)
-#
-#    def __init__(self, customerid, customerfirstname, customersurname, email, submit):
-#        self.customerfirstname = customerfirstname
-#        self.customersurname = customersurname
-#        self.email = email
-#        self.submit = submit
-    
+
+
+# class customer(db.Model):
+#     __tablename__ = 'customers'
+#     customerid = db.Column(db.Integer, primary_key = True)
+#     customerfirstname = db.Column(db.String(20))
+#     customersurname = db.Column(db.String(20))
+#     email = db.Column(db.String)
+
+#     def __init__(self, customerfirstname, customersurname, email):
+#         self.customerfirstname = customerfirstname
+#         self.customersurname = customersurname
+#         self.email = email
