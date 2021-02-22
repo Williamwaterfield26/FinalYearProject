@@ -74,7 +74,7 @@ def signup():
                 return render_template('signup.html', form=form)
 
 
-
+#hi
 #@app.route('/signup', methods=['GET', 'POST'])
 #def signup():
 #        form = AddAdminForm()
