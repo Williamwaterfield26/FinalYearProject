@@ -1,10 +1,15 @@
+{% import "bootstrap/wtf.html" as wtf %}
 {% extends "base.html"%}
 
 {% block head %} 
-
+<title>Delete Customer</title>
 {% endblock %}
 
 {% block body %}
+{{ wtf.quick_form(form) }}
+
+
+
 <div class="back">
     <a href="./listingpage.html"><button>Back</button></a>
 

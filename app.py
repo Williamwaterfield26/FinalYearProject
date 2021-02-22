@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, redirect, request, flash, Blueprint
-from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddAdminForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm
+from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddAdminForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteLitingForm
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -10,7 +10,7 @@ from wtforms import StringField, PasswordField, SubmitField, HiddenField, Intege
 from wtforms.validators import DataRequired, InputRequired, Length, Regexp, NumberRange
 from flask_table import Table, Col, LinkCol
 from django import forms
-from tables import CustomerResults
+from tables import CustomerResults, SupplierResults, ListingResults
 #from models import customer
 
 
@@ -112,9 +112,13 @@ def loggedin():
         return render_template('loggedin.html')
 
 
-@app.route('/supplierpage')
+@app.route('/supplierpage', methods = ['GET', 'POST'])
 def supplierpage():
-        return render_template('supplierpage.html')
+        search = SupplierSearchForm(request.form)
+        if request.method == 'POST':
+                return searchsupplierresults(search)
+        return render_template('supplierpage.html',form=search)
+        
 
 
 @app.route('/customerpage', methods = ['GET', 'POST'])
@@ -217,9 +221,13 @@ def userpage():
 
 
 
-@app.route('/listingpage')
+@app.route('/listingpage',methods = ['GET', 'POST'])
 def listingpage():
-        return render_template('listingpage.html')
+        search = ListingSearchForm(request.form)
+        if request.method == 'POST':
+                return searchlistingresults(search)
+        return render_template('listingpage.html', form=search)
+        
 
 
 @app.route('/stockpage')
@@ -270,18 +278,77 @@ def addsupplier():
 
 
 
-@app.route('/deletesupplier')
-def deletesupplier():
-        return render_template('deletesupplier.html')
+
+@app.route('/deletesupplier/<int:supplierid>', methods=['GET', 'POST'])
+def deletesupplier(supplierid):
+        qry = db.session.query(supplier).filter(supplier.supplierid==supplierid)
+        suppliername = qry.first()
+        if suppliername:
+                form = DeleteSupplierForm(formdata=request.form, obj=supplier)
+                if request.method == 'POST' and form.validate():
+                        db.session.delete(suppliername)
+                        db.session.commit()
+                        flash('Supplier deleted successfully!')
+                        return redirect('/supplierpage')
+                return render_template('deletesupplier.html', form=form)
+        else:
+                return 'Error deleting supplier'.format(supplierid=supplierid)
 
 
-@app.route('/editsupplier')
-def editsupplier():
-        return render_template('editsupplier.html')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@app.route('/editsupplier/<int:supplierid>',methods= ['GET','POST'])
+def editsupplier(supplierid):
+        qry = db.session.query(supplier).filter(supplier.supplierid== supplierid)
+        suppliername = qry.first()
+        if suppliername:
+                form = EditSupplierForm(formdata=request.form, obj=suppliername)
+                if request.method == 'POST' and form.validate():
+                        save_supplier(suppliername, form)
+
+                        flash('Supplier Updated!')
+                        return redirect ('/supplierpage')
+                return render_template('supplierpage.html', form=form)
+        else:
+                return 'Error loading supplier'.format(supplierid=supplierid)
+
+def save_supplier(suppliername, form, new=False):
+        suppliername.suppliername = form.suppliername.data
+
+        if new:
+                db.session.add(suppliername)
+        db.session.commit()
+        
 
 @app.route('/searchsupplier')
-def searchsupplier():
-        return render_template('searchsupplier.html')
+def searchsupplierresults(search):
+        results = []
+        search_string = search.data['search']
+        if search.data['search']== '':
+                qry = db.session.query(supplier)
+                results = qry.all()
+        if not results:
+                flash('No results found')
+                return redirect('/supplierpage')
+        else:
+                table = SupplierResults(results)
+                table.border = True
+                return render_template('results.html', table=table)
+
+
+
 
 @app.route('/allsupplier')
 def allsupplier():
@@ -507,17 +574,59 @@ def addlisting():
         return render_template('addlisting.html', form=form)
 
 
-@app.route('/deletelisting')
-def deletelisting():
-        return render_template('deletelisting.html')
+@app.route('/deletelisting<int:listingid>', methods=['GET', 'POST'])
+def deletelisting(listingid):
+        qry = db.session.query(listing).filter(listing.listingid==listingid)
+        supplierid = qry.first()
+        if supplierid:
+                form = DeleteLitingForm(formdata=request.form, obj=listing)
+                if request.method == 'POST' and form.validate():
+                        db.session.delete(supplierid)
+                        db.session.commit()
+                        flash('Listing deleted succesfully!')
+                        return redirect('/listingpage')
+                return render_template('deletelisting.html', form=form)
+        else:
+                return 'Error deleting listing'. format(listingid=listingid)
+        
 
-@app.route('/editlisting')
-def editlisting():
-        return render_template('editlisting.html')
+@app.route('/editlisting<int:listingid>', methods=['GET', 'POST'])
+def editlisting(listingid):
+        qry = db.session.query(listing).filter(listing.listingid==listingid)
+        supplierid = qry.first()
+        if supplierid:
+                form = EditListingForm(formdata=request.form, obj=supplierid)
+                if request.method == 'POST' and form.validate():
+                        save_listing(supplierid,form)
+                        flash ('Listing Updated!')
+                        return redirect('/listingpage')
+                return render_template('listingpage.html', form=form)
+        else:
+                return 'Error loading the listing'. format(listingid=listingid)
 
-@app.route('/searchedlisting')
-def searchedlisting():
-        return render_template('searchedlisting.html')
+def save_listing(supplierid, form, new=False):
+        supplierid.supplierid = form.supplierid.data
+        supplierid.price = form.price.data
+        if new:
+                db.session.add(supplierid)
+        db.session.commit()
+
+@app.route('/listingresults')
+def searchlistingresults(search):
+        results=[]
+        search_string = search.data['search']
+        if search.data['search']== '':
+                qry = db.session.query(listing)
+                results = qry.all()
+        if not results:
+                flash('No results found')
+                return redirect ('/listingpage')
+        else:
+                table = ListingResults(results)
+                table.border = True
+                return render_template('results.html', table=table)
+
+
 
 @app.route('/alllistings')
 def alllistings():

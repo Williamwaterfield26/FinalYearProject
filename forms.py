@@ -139,3 +139,42 @@ class DeleteCustomerForm(FlaskForm):
     customersurname =('Customer Surname')
     email =('Email')
     delete = SubmitField('Delete')
+
+
+class EditSupplierForm(FlaskForm):
+    suppliername = StringField('Supplier Name', [InputRequired(),
+    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Supplier Name"),
+    ])
+    update = SubmitField('Update')
+    cancel = SubmitField('Cancel')
+
+class DeleteSupplierForm(FlaskForm):
+    suppliername= ('Supplier Name')
+    delete = SubmitField('Delete')
+
+class SupplierSearchForm(FlaskForm):
+    choices = [('suppliername', 'suppliername')]
+    select = SelectField('Search for a supplier', choices=choices)
+    search = StringField('')
+
+
+class EditListingForm(FlaskForm):
+    supplierid = IntegerField('Supplier ID', [InputRequired(),
+    NumberRange(min=1.00, max=4000, message= "Invalid Supplier ID")
+    ])
+    price = FloatField('Price', [InputRequired(),
+    NumberRange(min=1.00, max=4000, message= "Invalid Price Range. Please enter a price of at least £1"),
+    ])
+    update = SubmitField('Update')
+    cancel = SubmitField('Cancel')
+
+class DeleteLitingForm(FlaskForm):
+    supplierid= ('Supplier ID')
+    price= ('Price')
+    delete = SubmitField('Delete')
+
+class ListingSearchForm(FlaskForm):
+    choices = [('supplierid', 'supplierid')]
+    select = SelectField ('Search for a listing', choices=choices)
+    search = StringField('')
+
