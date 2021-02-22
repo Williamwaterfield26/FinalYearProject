@@ -45,6 +45,71 @@ class AddCustomerForm(FlaskForm):
     ])
     submit = SubmitField ('Add Customer')
 
+
+class AddSoldItemForm(FlaskForm):
+    solditemid = HiddenField()
+    customerfirstname = StringField('Customer Firstname',[InputRequired(),
+    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Firstname"),
+    Length(max=20, message="Too long Firstname")
+    ])
+    customersurname = StringField('Customer Surname',[InputRequired(),
+    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Surname"),
+    Length(max=20, message="Too long Surname")
+    ])
+    email = StringField('Email',[InputRequired(),
+    #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
+    ])
+    price = FloatField('Price', [InputRequired(),
+    NumberRange(min=1.00, message= "Invalid Price Range. Please enter a price of at least £1"),
+    ])
+    supplierid = IntegerField('Supplier ID', [InputRequired(),
+    NumberRange(min=1.00, max=4000, message= "Invalid Supplier ID")
+    ])
+    suppliername = StringField('Supplier Name', [InputRequired(),
+    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Supplier Name"),
+    ])
+    submit = SubmitField('Add Sold Item')
+
+class DeleteSoldItemForm(FlaskForm):
+    customerfirstname =('Customer Firstname')
+    customersurname = ('Customer Surname')
+    email = ('Email')
+    price = ('Price')
+    supplierid = ('Supplier ID')
+    suppliername = ('Supplier Name')
+    delete = ('Delete')
+
+
+class SoldItemSearchForm(FlaskForm):
+    choices = [('customersurname','customersurname')]
+    select = SelectField ('Search for a customer', choices=choices)
+    search = StringField('')
+
+class EditSoldItemForm(FlaskForm):
+    customerfirstname = StringField('Customer Firstname',[InputRequired(),
+    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Firstname"),
+    Length(max=20, message="Too long Firstname")
+    ])
+    customersurname = StringField('Customer Surname',[InputRequired(),
+    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Surname"),
+    Length(max=20, message="Too long Surname")
+    ])
+    email = StringField('Email',[InputRequired(),
+    #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
+    ])
+    price = FloatField('Price', [InputRequired(),
+    NumberRange(min=1.00, message= "Invalid Price Range. Please enter a price of at least £1"),
+    ])
+    supplierid = IntegerField('Supplier ID', [InputRequired(),
+    NumberRange(min=1.00, max=4000, message= "Invalid Supplier ID")
+    ])
+    suppliername = StringField('Supplier Name', [InputRequired(),
+    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Supplier Name"),
+    ])
+    update =SubmitField('Update')
+    cancel =SubmitField('Cancel')
+
+
 class AddStockForm(FlaskForm):
     stockid = HiddenField()
     size = StringField('Size', [InputRequired(),
@@ -177,4 +242,47 @@ class ListingSearchForm(FlaskForm):
     choices = [('supplierid', 'supplierid')]
     select = SelectField ('Search for a listing', choices=choices)
     search = StringField('')
+
+class EditStockForm(FlaskForm):
+    size = StringField('Size', [InputRequired(),
+    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Size"),
+    Length(min=0,max=3, message="Too many characters for Size")
+    ])
+    type = StringField('Type', [InputRequired(),
+    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Type of clothing"),
+    ])
+    colour = StringField('Colour', [InputRequired(),
+    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Colour"),
+    ])
+    brand = StringField('Brand', [InputRequired(),
+    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Brand"),
+    ])
+    price = FloatField('Price', [InputRequired(),
+    NumberRange(min=1.00, message= "Invalid Price Range. Please enter a price of at least £1"),
+    ])
+    supplierid = IntegerField('Supplier ID', [InputRequired(),
+    NumberRange(min=1.00, max=4000, message= "Invalid Supplier ID")
+    ])
+    material = StringField('Material', [InputRequired(),
+    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Material"),
+    ])
+    update = SubmitField('Update')
+    cancel = SubmitField('Cancel')
+
+class StockSearchForm(FlaskForm):
+    choices = [('stockid', 'stockid')]
+    select = SelectField('Search for a stock item', choices=choices)
+    search = StringField('')
+
+class DeleteStockForm(FlaskForm):
+    size= ('size')
+    type= ('type')
+    colour = ('colour')
+    brand = ('brand')
+    price = ('price')
+    supplierid =('supplierid')
+    material = ('material')
+    delete = SubmitField('Delete')
+
+
 

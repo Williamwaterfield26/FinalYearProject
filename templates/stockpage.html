@@ -1,14 +1,14 @@
+{% import "bootstrap/wtf.html" as wtf %}
 {% extends "base.html"%}
 
 {% block head %} 
-
+<title>Stock Page</title>
 {% endblock %}
 
 {% block body %}
+{{ wtf.quick_form(form) }}
 
 <a href="./addstock"><button>Add Stock</button></a>
-<a href="./allstock"><button>Veiw All Stock</button></a>
-
 <div class="back">
     <a href="./loggedin"><button>Back</button></a>
 

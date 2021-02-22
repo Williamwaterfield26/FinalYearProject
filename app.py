@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, redirect, request, flash, Blueprint
-from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddAdminForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteLitingForm
+from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddAdminForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteLitingForm, StockSearchForm, EditStockForm, DeleteStockForm, AddSoldItemForm, DeleteSoldItemForm, EditSoldItemForm, SoldItemSearchForm
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -10,7 +10,7 @@ from wtforms import StringField, PasswordField, SubmitField, HiddenField, Intege
 from wtforms.validators import DataRequired, InputRequired, Length, Regexp, NumberRange
 from flask_table import Table, Col, LinkCol
 from django import forms
-from tables import CustomerResults, SupplierResults, ListingResults
+from tables import CustomerResults, SupplierResults, ListingResults, StockResults, SoldItemResults
 #from models import customer
 
 
@@ -230,13 +230,20 @@ def listingpage():
         
 
 
-@app.route('/stockpage')
+@app.route('/stockpage', methods = ['GET', 'POST'])
 def stockpage():
-        return render_template('stockpage.html')
+        search = StockSearchForm(request.form)
+        if request.method == 'POST':
+                return searchstockresults(search)
+        return render_template('stockpage.html', form=search)
 
-@app.route('/solditempage')
+
+@app.route('/solditempage', methods = ['GET', 'POST'])
 def solditempage():
-        return render_template('solditempage.html')
+        search = SoldItemSearchForm(request.form)
+        if request.method == 'POST':
+                return searchsolditemresults(search)
+        return render_template('solditempage.html', form=search)
 
 
 @app.route('/logoff')
@@ -488,31 +495,205 @@ def addstock():
                 return render_template('addstock.html', form=form)
 
 
+@app.route('/deletestock/<int:stockid>', methods=['GET','POST'])
+def deletestock(stockid):
+        qry = db.session.query(stock).filter(stock.stockid==stockid)
+        stockid = qry.first()
+        if stockid:
+                form = DeleteStockForm(formdata=request.form, obj=stock)
+                if request.method == 'POST' and form.validate():
+                        db.session.delete(stockid)
+                        db.session.commit()
+                        flash('Stock deleted successfully!')
+                        return redirect('/stockpage')
+                return render_template('deletestock.html', form=form)
+        else:
+                return 'Error deleting stock'.format (stockid=stockid)
 
 
-@app.route('/editstock')
-def editstock():
-        return render_template('editstock.html')
+@app.route('/editstock/<int:stockid>', methods=['GET', 'POST'])
+def editstock(stockid):
+        qry = db.session.query(stock).filter( stock.stockid == stockid)
+        stockid = qry.first()
+        if stockid:
+                form = EditStockForm(formdata=request.form, obj = stockid)
+                if request.method == 'POST' and form.validate():
+                        save_stock(stockid,form)
 
-@app.route('/searchstock')
-def searchstock():
-        return render_template('searchstock.html')
+                        flash ('Stock updated!')
+                        return redirect ('/stockpage')
+                return render_template('stockpage.html', form=form)
+        else:
+                return 'Error loading the customer'.format(stockid=stockid)
+
+
+
+def save_stock(stockid, form, new=False):
+        #stockid.stockid = form.stockid.data
+        stockid.size = form.size.data
+        stockid.type = form.type.data
+        stockid.colour = form.colour.data
+        stockid.brand = form.brand.data
+        stockid.price = form.price.data
+        stockid.supplierid = form.supplierid.data
+        stockid.material = form.material.data
+        if new:
+                db.session.add(stockid)
+        db.session.commit()
+
+
+
+
+
+
+@app.route('/stockresults')
+def searchstockresults(search):
+        results = []
+        search_string = search.data['search']
+
+        if search.data['search']== '':
+                qry = db.session.query(stock)
+                results = qry.all()
+        if not results:
+                flash('No results found')
+                return redirect ('/stockpage')
+        else:
+                table = StockResults(results)
+                table.border = True
+                return render_template('results.html', table=table)
+
 
 @app.route('/allstock')
 def allstock():
         return render_template('allstock.html')
 
-@app.route('/deletesolditem')
-def deletesolditem():
-        return render_template('deletesolditem.html')
+class solditem(db.Model):
+    __tablename__ = 'solditem'
+    solditemid = db.Column(db.Integer, primary_key = True)
+    customerfirstname = db.Column(db.String())
+    customersurname = db.Column(db.String)
+    email = db.Column(db.String)
+    stockid = db.Column(db.Integer)
+    price = db.Column(db.Float)
+    supplierid = db.Column(db.Integer)
+    suppliername = db.Column(db.String)
 
-@app.route('/editsolditem')
-def editsolditem():
-        return render_template('editsolditem.html')
 
-@app.route('/searchedsolditem')
-def searchedsolditem():
-        return render_template('searchedsolditem.html')
+
+    def __init__(self,customerfirstname, customersurname, email, stockid, price, supplierid, suppliername):
+        self.customerfirstname = customerfirstname
+        self.customersurname = customersurname
+        self.email = email
+        self.stockid = stockid
+        self.price = price
+        self.supplierid = supplierid
+        self.suppliername = suppliername
+
+
+
+@app.route('/addsolditem', methods=['GET', 'POST'])
+def addsolditem():
+        form = AddSoldItemForm()
+        if form.validate_on_submit():
+                customerfirstname = request.form['customerfirstname']
+                customersurname = request.form['customersurname']
+                email = request.form['email']
+                stockid = request.form['stockid']
+                price = request.form['price']
+                supplierid = request.form['supplierid']
+                suppliername = request.form['suppliername']
+
+                
+                record = solditem(customerfirstname, customersurname, email, stockid, price, supplierid, suppliername)
+                db.session.add(record)
+                db.session.commit()
+                message = f"The Sold Item has been submitted"
+                return render_template('solditempage.html', message=message)
+        else:
+                #show validation
+                for field, errors in form.errors.items():
+                        for error in errors:
+                                flash("Error in {}: {}".format(
+                                        getattr(form, field).label.text,
+                                        error
+                                ), 'error')
+
+
+                return render_template('addsolditem.html', form=form)
+
+
+
+@app.route('/deletesolditem/<int:solditemid>', methods=['GET','POST'])
+def deletesolditem(solditemid):
+        qry = db.session.query(solditem).filter(solditem.solditemid==solditemid)
+        solditemid = qry.first()
+        if solditemid:
+                form = DeleteSoldItemForm(formdata=request.form, obj=solditem)
+                if request.method == 'POST' and form.validate():
+                        db.session.delete(solditemid)
+                        db.session.commit()
+                        flash('Sold Item deleted successfully!')
+                        return redirect('/solditempage')
+                return render_template('solditempage.html', form=form)
+        else:
+                return 'Error deleting the Sold Item'.format (solditemid=solditemid)
+
+
+@app.route('/editsolditem/<int:solditemid>', methods=['GET', 'POST'])
+def editsolditem(solditemid):
+        qry = db.session.query(solditem).filter( solditem.solditemid == solditemid)
+        solditemid = qry.first()
+        if solditemid:
+                form = EditSoldItemForm(formdata=request.form, obj = solditemid)
+                if request.method == 'POST' and form.validate():
+                        save_solditem(solditemid,form)
+
+                        flash ('Sold Item updated!')
+                        return redirect ('/solditempage')
+                return render_template('solditempage.html', form=form)
+        else:
+                return 'Error loading the sold item'.format(solditemid=solditemid)
+
+
+
+        suppliername = ('Supplier Name')
+        edit = LinkCol('Edit', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
+        delete = LinkCol('Delete', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
+
+
+
+
+def save_solditem(solditemid, form, new=False):
+        solditemid.solditemid = form.solditemid.data
+        solditemid.customerfirstname = form.customerfirstname.data
+        solditemid.email = form.email.data
+        solditemid.stockid = form.stockid.data
+        solditemid.price = form.price.data
+        solditemid.supplierid = form.supplierid.data
+        solditemid.suppliername = form.suppliername.data
+        if new:
+                db.session.add(solditemid)
+        db.session.commit()
+
+
+@app.route('/solditemresults')
+def searchsolditemresults(search):
+        results = []
+        search_string = search.data['search']
+
+        if search.data['search']== '':
+                qry = db.session.query(solditem)
+                results = qry.all()
+        if not results:
+                flash('No results found')
+                return redirect ('/solditempage')
+        else:
+                table = SoldItemResults(results)
+                table.border = True
+                return render_template('results.html', table=table)
+
+
+
 
 @app.route('/allsolditems')
 def allsolditems():
@@ -602,7 +783,7 @@ def editlisting(listingid):
                         return redirect('/listingpage')
                 return render_template('listingpage.html', form=form)
         else:
-                return 'Error loading the listing'. format(listingid=listingid)
+                return 'Error loading the listing'. format(listingid=listingid )
 
 def save_listing(supplierid, form, new=False):
         supplierid.supplierid = form.supplierid.data
