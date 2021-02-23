@@ -136,7 +136,7 @@ def customerpage():
 def searchcustomerresults(search):
         results = []
         search_string = search.data['search']
-
+ 
         if search.data['search']== '':
                 qry = db.session.query(customer)
                 results = qry.all()
@@ -150,21 +150,42 @@ def searchcustomerresults(search):
 
 
 
-# @app.route('/customerresults/<int:customerid>', methods=['GET', 'POST'])
+
+
+
+@app.route('/allcustomer')
+def allcustomer():
+        results=[]
+        qry = db.session.query(customer)
+        results = qry.all()
+        table=CustomerResults(results)
+        table.border =True
+        return render_template('allcustomer.html', table=table)
+
+
+
+
+                                                                        # Album = customer
+                                                                        # album = customersurname
+
+
+# @app.route('/customerresults')
 # def searchcustomerresults(search):
 #         results = []
 #         search_string = search.data['search']
 #         if search_string:
 #                 if search.data['select']== 'customerid':
-#                         qry = db.session.query(customerid, customersurname).filter(customerfirstname==customersurname).filter(customer.customerid.contains(search_string))
+#                         qry = db.session.query(customer, customerid).filter(customer.customerid==customer.customerid).filter(customer.customerid.contains(search_string))
 #                         results= [item[0] for item in qry.all()]
 #                 elif search.data ['select'] == 'customerfirstname':
-#                         qry = db.session.query(customerfirstname).filter(customerfirstname.customerfirstname.contains(search_string))
+#                         qry = db.session.query(customer).filter(customer.customerfirstname.contains(search_string))
 #                         results = qry.all()
 #                 elif search.data ['select'] == 'customersurname':
-#                         qry = db.session.query(customersurname).filter(customersurname.customersurname.contains(search_string))
+#                         qry = db.session.query(customer).filter(customer.customersurname.contains(search_string))
 #                         results = qry.all()
-                        
+#                 else:
+#                         qry = db.session.query(customer)
+#                         results = qry.all()
 #         if not results:
 #                 flash('No results found')
 #                 return redirect ('/customerpage')
@@ -172,7 +193,6 @@ def searchcustomerresults(search):
 #                 table = CustomerResults(results)
 #                 table.border = True
 #                 return render_template('results.html', table=table)
-
 
 
 
@@ -302,6 +322,14 @@ def deletesupplier(supplierid):
                 return 'Error deleting supplier'.format(supplierid=supplierid)
 
 
+@app.route('/allsupplier')
+def allsupplier():
+        results=[]
+        qry = db.session.query(supplier)
+        results = qry.all()
+        table=SupplierResults(results)
+        table.border =True
+        return render_template('allsupplier.html', table=table)
 
 
 
@@ -357,9 +385,7 @@ def searchsupplierresults(search):
 
 
 
-@app.route('/allsupplier')
-def allsupplier():
-        return render_template('allsupplier.html')
+
 
 
 
@@ -431,9 +457,7 @@ def deletecustomer(customerid):
 # @app.route('/searchcustomer')
 # def searchcustomer():
 #         return render_template('searchcustomer.html')
-# @app.route('/allcustomer')
-# def allcustomer():
-#         return render_template('allcustomer.html')
+
 
 
 
@@ -528,6 +552,17 @@ def editstock(stockid):
 
 
 
+
+@app.route('/allstock')
+def allstock():
+        results=[]
+        qry = db.session.query(stock)
+        results = qry.all()
+        table=StockResults(results)
+        table.border =True
+        return render_template('allstock.html', table=table)
+
+
 def save_stock(stockid, form, new=False):
         #stockid.stockid = form.stockid.data
         stockid.size = form.size.data
@@ -563,9 +598,7 @@ def searchstockresults(search):
                 return render_template('results.html', table=table)
 
 
-@app.route('/allstock')
-def allstock():
-        return render_template('allstock.html')
+
 
 class solditem(db.Model):
     __tablename__ = 'solditem'
@@ -656,9 +689,18 @@ def editsolditem(solditemid):
 
 
 
-        suppliername = ('Supplier Name')
-        edit = LinkCol('Edit', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
-        delete = LinkCol('Delete', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
+        # suppliername = ('Supplier Name')
+        # edit = LinkCol('Edit', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
+        # delete = LinkCol('Delete', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
+
+@app.route('/allsolditem')
+def allsolditem():
+        results=[]
+        qry = db.session.query(solditem)
+        results = qry.all()
+        table=SoldItemResults(results)
+        table.border =True
+        return render_template('allsolditem.html', table=table)
 
 
 
@@ -695,9 +737,7 @@ def searchsolditemresults(search):
 
 
 
-@app.route('/allsolditems')
-def allsolditems():
-        return render_template('allsolditems.html')
+
 
 @app.route('/adduser')
 def adduser():
@@ -809,9 +849,16 @@ def searchlistingresults(search):
 
 
 
-@app.route('/alllistings')
-def alllistings():
-        return render_template('alllistings.html')
+@app.route('/alllisting')
+def alllisting():
+        results=[]
+        qry = db.session.query(listing)
+        results = qry.all()
+        table=ListingResults(results)
+        table.border =True
+        return render_template('alllisting.html', table=table)
+
+
 
 
 

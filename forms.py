@@ -3,8 +3,9 @@ from wtforms import StringField, PasswordField, SubmitField, HiddenField
 from flask import Flask, render_template, url_for, redirect
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
-from wtforms import StringField, PasswordField, SubmitField, HiddenField, IntegerField, FloatField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, HiddenField, IntegerField, FloatField, SelectField, Form
 from wtforms.validators import DataRequired, InputRequired, Length, Regexp, NumberRange
+
 #from app import db
 
 class SignUpForm(FlaskForm):
@@ -173,10 +174,10 @@ class AddAdminForm(FlaskForm):
     submit = SubmitField('Sign Up')
     
 
-# class CustomerSearchForm(FlaskForm):
-#     choices = [('customerid', 'customerid'), ('customerfirstname'), ('customersurname', 'customersurname'), ('email','email')]
-#     select = SelectField ('Search for a customer', choices=choices)
-#     search = StringField('')
+#class CustomerSearchForm(Form):
+    # choices = [('customerid', 'customerid'), ('customerfirstname'), ('customersurname', 'customersurname'), ('email','email')]
+    # select = SelectField ('Search for a customer', choices=choices)
+    # search = StringField('')
 class CustomerSearchForm(FlaskForm):
     choices = [('customersurname','customersurname')]
     select = SelectField ('Search for a customer', choices=choices)
