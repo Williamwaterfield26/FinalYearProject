@@ -47,3 +47,13 @@ class SoldItemResults(Table):
         suppliername = ('Supplier Name')
         edit = LinkCol('Edit', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
         delete = LinkCol('Delete', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
+
+
+class AdminResults(Table):
+        id = Col('Admin ID', show=False)
+        ausername = Col('Username')
+        apassword = Col('Password')
+        email = Col('Email')
+        edit = LinkCol('Edit', 'editadmin', url_kwargs=dict(id = 'id'))
+        delete = LinkCol('Delete', 'deleteadmin', url_kwargs=dict(id='id'))
+        

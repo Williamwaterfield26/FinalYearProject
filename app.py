@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, redirect, request, flash, Blueprint
-from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddAdminForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteLitingForm, StockSearchForm, EditStockForm, DeleteStockForm, AddSoldItemForm, DeleteSoldItemForm, EditSoldItemForm, SoldItemSearchForm
+from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddAdminForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteLitingForm, StockSearchForm, EditStockForm, DeleteStockForm, AddSoldItemForm, DeleteSoldItemForm, EditSoldItemForm, SoldItemSearchForm, AdminSearchForm, EditAdminForm, DeleteAdminForm
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -10,7 +10,7 @@ from wtforms import StringField, PasswordField, SubmitField, HiddenField, Intege
 from wtforms.validators import DataRequired, InputRequired, Length, Regexp, NumberRange
 from flask_table import Table, Col, LinkCol
 from django import forms
-from tables import CustomerResults, SupplierResults, ListingResults, StockResults, SoldItemResults
+from tables import CustomerResults, SupplierResults, ListingResults, StockResults, SoldItemResults, AdminResults
 #from models import customer
 
 
@@ -161,12 +161,6 @@ def allcustomer():
         table=CustomerResults(results)
         table.border =True
         return render_template('allcustomer.html', table=table)
-
-
-
-
-                                                                        # Album = customer
-                                                                        # album = customersurname
 
 
 # @app.route('/customerresults')
@@ -736,28 +730,88 @@ def searchsolditemresults(search):
 
 
 
+@app.route('/adminresults')
+def searchadminresults(search):
+        results = []
+        search_string = search.data['search']
+ 
+        if search.data['search']== '':
+                qry = db.session.query(admin)
+                results = qry.all()
+        if not results:
+                flash('No results found')
+                return redirect ('/adminpage')
+        else:
+                table = AdminResults(results)
+                table.border = True
+                return render_template('results.html', table=table)
+
+
+@app.route('/alladmin')
+def alladmin():
+        results=[]
+        qry = db.session.query(admin)
+        results = qry.all()
+        table=AdminResults(results)
+        table.border =True
+        return render_template('alladmin.html', table=table)
+
+
+@app.route('/adminpage', methods = ['GET', 'POST'])
+def adminpage():
+        search = AdminSearchForm(request.form)
+        if request.method == 'POST':
+                return searchadminresults(search)
+
+        return render_template('adminpage.html', form=search)
+
+
+@app.route('/editadmin/<int:id>', methods=['GET', 'POST'])
+def editadmin(id):
+        qry = db.session.query(admin).filter( admin.id == id)
+        ausername = qry.first()
+        if ausername:
+                form = EditAdminForm(formdata=request.form, obj = ausername)
+                if request.method == 'POST' and form.validate():
+                        save_admin(ausername,form)
+
+                        flash ('Admin updated!')
+                        return redirect ('/adminpage')
+                return render_template('adminpage.html', form=form)
+        else:
+                return 'Error loading the admin'.format(id=id)
 
 
 
-@app.route('/adduser')
-def adduser():
-        return render_template('adduser.html')
 
-@app.route('/deleteuser')
-def deleteuser():
-        return render_template('deleteuser.html')
+def save_admin(ausername, form, new=False):
+        ausername.ausername = form.ausername.data
+        ausername.apassword = form.apassword.data
+        ausername.email = form.email.data
 
-@app.route('/edituser')
-def edituser():
-        return render_template('edituser.html')
+        if new:
+                record = admin(ausername= ausername, apassword= generate_password_hash(apassword, method = 'sha256'), email= email)
+                db.session.add(ausername)
+        db.session.commit()
 
-@app.route('/searcheduser')
-def searcheduser():
-        return render_template('searcheduser.html')
 
-@app.route('/alluser')
-def alluser():
-        return render_template('alluser.html')
+
+@app.route('/deleteadmin<int:id>', methods=['GET', 'POST'])
+def deleteadmin(listingid):
+        qry = db.session.query(admin).filter(admin.id==listingid)
+        ausername = qry.first()
+        if ausername:
+                form = DeleteAdminForm(formdata=request.form, obj=admin)
+                if request.method == 'POST' and form.validate():
+                        db.session.delete(id)
+                        db.session.commit()
+                        flash('Admin deleted succesfully!')
+                        return redirect('/adminpage')
+                return render_template('deleteadmin.html', form=form)
+        else:
+                return 'Error deleting Admin'. format(id=id)
+
+
 
 class listing(db.Model):
         __tablename__ = 'listing'

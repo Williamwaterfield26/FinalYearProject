@@ -1,0 +1,20 @@
+{% extends "base.html"%}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+{% block head %} 
+<title>Admin Page</title>
+
+{% endblock %}
+
+{% block body %}
+<h2>Admin Page</h2>
+<br>
+</br>
+{{ wtf.quick_form(form) }}
+<a href="./alladmin"><button>Show All Admins</button></a>
+<div class="back">
+    <a href="./loggedin"><button>Back</button></a>
+
+</div>
+{% endblock %}

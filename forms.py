@@ -287,3 +287,25 @@ class DeleteStockForm(FlaskForm):
 
 
 
+class AdminSearchForm(FlaskForm):
+    choices = [('ausername','ausername')]
+    select = SelectField('Search for an Admin', choices=choices)
+    search = StringField('')
+
+class EditAdminForm(FlaskForm):
+    ausername = StringField('Username', [InputRequired(),
+    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Username"),
+    ])
+    apassword = StringField('Password', [InputRequired(),
+    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Password"),
+    ])
+    email = StringField('Email',[InputRequired(),
+    #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
+    ])
+    update = SubmitField('Update')
+
+class DeleteAdminForm(FlaskForm):
+    ausername = ('Username')
+    apassword = ('Password')
+    email = ('Email')
+    delete = SubmitField('Delete')
