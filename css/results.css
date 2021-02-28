@@ -1,0 +1,12 @@
+td,th,table{
+    background-color: blue;
+    border-collapse: collapse;
+  }
+
+button{
+    color: green;
+}
+
+h1{
+    color: hotpink;
+}
