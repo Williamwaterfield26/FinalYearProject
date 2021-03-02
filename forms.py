@@ -9,8 +9,8 @@ from wtforms.validators import DataRequired, InputRequired, Length, Regexp, Numb
 #from app import db
 
 class SignUpForm(FlaskForm):
-    username = StringField('Username')
-    password = PasswordField('Password')
+    ausername = StringField('Username')
+    apassword = PasswordField('Password')
     email = StringField('Email')
     submit = SubmitField('Sign Up')
     
@@ -60,6 +60,9 @@ class AddSoldItemForm(FlaskForm):
     email = StringField('Email',[InputRequired(),
     #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
     ])
+    stockid = IntegerField('Stock ID', [InputRequired(),
+    NumberRange(min=1.00, max=4000, message= "Invalid Stock ID")
+    ])
     price = FloatField('Price', [InputRequired(),
     NumberRange(min=1.00, message= "Invalid Price Range. Please enter a price of at least £1"),
     ])
@@ -87,6 +90,7 @@ class SoldItemSearchForm(FlaskForm):
     search = StringField('')
 
 class EditSoldItemForm(FlaskForm):
+    solditem = HiddenField()
     customerfirstname = StringField('Customer Firstname',[InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Firstname"),
     Length(max=20, message="Too long Firstname")

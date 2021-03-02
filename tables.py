@@ -46,7 +46,7 @@ class SoldItemResults(Table):
         supplierid = ('Supplier ID')
         suppliername = ('Supplier Name')
         edit = LinkCol('Edit', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
-        delete = LinkCol('Delete', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
+        delete = LinkCol('Delete', 'deletesolditem', url_kwargs=dict(solditemid='solditemid'))
 
 
 class AdminResults(Table):

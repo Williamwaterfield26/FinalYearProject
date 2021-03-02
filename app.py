@@ -57,12 +57,17 @@ def signup():
                 apassword = request.form['apassword']
                 email = request.form['email']
                 
-                #record = admin(ausername,apassword,email)
+                Admin = admin.query.filter_by(email=email).first()
+                if Admin:
+                        message=f'User Already Created, please sign in or user another email'
+                        return render_template('signup.html', message=message, form=form)
+                # else:
+
                 record = admin(ausername= ausername, apassword= generate_password_hash(apassword, method = 'sha256'), email= email)
                 db.session.add(record)
                 db.session.commit()
-                message = f"The Supplier has been submitted"
-                return render_template('signin.html', message=message)
+                message = f"User has been created"
+                return render_template('signin.html', message=message,form=form)
         else:
                 #show validation
                 for field, errors in form.errors.items():
