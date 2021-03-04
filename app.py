@@ -1,17 +1,21 @@
 from flask import Flask, render_template, url_for, redirect, request, flash, Blueprint
-from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddAdminForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteLitingForm, StockSearchForm, EditStockForm, DeleteStockForm, AddSoldItemForm, DeleteSoldItemForm, EditSoldItemForm, SoldItemSearchForm, AdminSearchForm, EditAdminForm, DeleteAdminForm
+from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddAdminForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteLitingForm, StockSearchForm, EditStockForm, DeleteStockForm, AddSoldItemForm, DeleteSoldItemForm, EditSoldItemForm, SoldItemSearchForm, AdminSearchForm, EditAdminForm, DeleteAdminForm, RegisterForm, LoginForm
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
-from flask_login import UserMixin
+from flask_login import UserMixin, LoginManager
 from datetime import date
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import StringField, PasswordField, SubmitField, HiddenField, IntegerField, FloatField
 from wtforms.validators import DataRequired, InputRequired, Length, Regexp, NumberRange
 from flask_table import Table, Col, LinkCol
 from django import forms
+from flask_migrate import Migrate, MigrateCommand
+from flask_script import Manager
 from tables import CustomerResults, SupplierResults, ListingResults, StockResults, SoldItemResults, AdminResults
+from werkzeug.security import generate_password_hash, check_password_hash
 #from models import customer
+from flask_login import login_user, login_required, logout_user
 
 
 
@@ -21,64 +25,68 @@ Bootstrap(app)
 db_name = 'DatabaseFYP.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_name
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+login_manager=LoginManager(app)
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+manager = Manager(app)
+manager.add_command('db',MigrateCommand)
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+# @app.route('/')
+# def index():
+#     return render_template('index.html')
 
-class admin(UserMixin, db.Model):
-        id = db.Column(db.Integer, primary_key=True)
-        ausername = db.Column(db.String(10), nullable= False, unique = True)
-        apassword = db.Column(db.String(10))
-        email = db.Column(db.String)
+# class admin(UserMixin, db.Model):
+#         id = db.Column(db.Integer, primary_key=True)
+#         ausername = db.Column(db.String(10), nullable= False, unique = True)
+#         apassword = db.Column(db.String(10))
+#         email = db.Column(db.String)
 
 
-@app.route('/signin', methods= ['GET','POST'])
-def signin():
-    form = SignInForm()
-    if form.validate_on_submit():
-            ausername= request.form['ausername']
-            apassword= request.form['apassword']
-            #remember = True if request.form.get('remember') else False
+# @app.route('/signin', methods= ['GET','POST'])
+# def signin():
+#     form = SignInForm()
+#     if form.validate_on_submit():
+#             ausername= request.form['ausername']
+#             apassword= request.form['apassword']
+#             #remember = True if request.form.get('remember') else False
             
-            record = admin.query.filter_by(ausername=ausername).first()
-            if not admin or not check_password_hash(admin.apassword, apassword):
-                    flash('Please check your login details and try again.')
-                    return redirect(url_for('signin.html'))
-            return redirect(url_for('loggedin.html'))
-    return render_template('signin.html', form=form)
+#             record = admin.query.filter_by(ausername=ausername).first()
+#             if not admin or not check_password_hash(admin.apassword, apassword):
+#                     flash('Please check your login details and try again.')
+#                     return redirect(url_for('signin.html'))
+#             return redirect(url_for('loggedin.html'))
+#     return render_template('signin.html', form=form)
 
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-        form = AddAdminForm()
-        if form.validate_on_submit():
-                ausername = request.form['ausername']
-                apassword = request.form['apassword']
-                email = request.form['email']
+# @app.route('/signup', methods=['GET', 'POST'])
+# def signup():
+#         form = AddAdminForm()
+#         if form.validate_on_submit():
+#                 ausername = request.form['ausername']
+#                 apassword = request.form['apassword']
+#                 email = request.form['email']
                 
                 
                 
-                Admin = admin.query.filter_by(email=email).first()
-                if Admin:
-                        message=f'User Already Created, please sign in or user another email'
-                        return render_template('signup.html', message=message, form=form)
-                # else:
+#                 Admin = admin.query.filter_by(email=email).first()
+#                 if Admin:
+#                         message=f'User Already Created, please sign in or user another email'
+#                         return render_template('signup.html', message=message, form=form)
+#                 # else:
 
-                record = admin(ausername= ausername, apassword= generate_password_hash(apassword, method = 'sha256'), email= email)
-                db.session.add(record)
-                db.session.commit()
-                message = f"User has been created"
-                return render_template('signin.html', message=message,form=form)
-        else:
-                #show validation
-                for field, errors in form.errors.items():
-                        for error in errors:
-                                flash("Error in {}: {}".format(
-                                        getattr(form, field).label.text,
-                                        error
-                                ), 'error')
-                return render_template('signup.html', form=form)
+#                 record = admin(ausername= ausername, apassword= generate_password_hash(apassword, method = 'sha256'), email= email)
+#                 db.session.add(record)
+#                 db.session.commit()
+#                 message = f"User has been created"
+#                 return render_template('signin.html', message=message,form=form)
+#         else:
+#                 #show validation
+#                 for field, errors in form.errors.items():
+#                         for error in errors:
+#                                 flash("Error in {}: {}".format(
+#                                         getattr(form, field).label.text,
+#                                         error
+#                                 ), 'error')
+#                 return render_template('signup.html', form=form)
 
 
 #hi
@@ -113,6 +121,8 @@ def invaliddetails():
 @app.route('/registered')
 def registered():
         return render_template('registered.html')
+
+
 
 @app.route('/loggedin')
 def loggedin():
@@ -994,78 +1004,90 @@ def alllisting():
 
 
 
-#CUSTOMER STUFF
 
-# @app.route('/all_customers')
-# def all_customers():
-#     return 'All Customers Page'
+###LOGIN ATTEMPT
+# @app.route('/login/', methods=['GET', 'POST'])
+# def login():
+#         message =''
+#         return render_template('index.html', message='')
 
-# # @app.route('/addcustomer', methods =['GET', 'POST'])
-# # def addcustomer():
-# #     form = AddCustomerForm()
-# #     if form. validate_on_submit():
-# #         customerfirstname = request.form['customerfirstname']
-# #         customersurname = request.form['customersurname']
-# #         email = request.form['email']
-
-                
-# #         record = customer(customerfirstname,customersurname,email)
-# #         db.session.add(record)
-# #         db.session.commit()
-# #         message = f"The Customer has been submitted"
-# #         return render_template('customerpage.html', message=message)
+#         if request.method == 'POST' and 'ausername' in request.form and 'apassword' in request.form:
+#                 ausername = request.form['ausername']
 
 
-# # @app.route('/customer/<customerid>', methods = ['GET', 'POST'])
-# # def customer(customerid):
-# #     customer = customer.query.get(customerid)
-# #     return render_template('customerpage.html', customer = customer)
+@app.route('/login_required')
+def login_required
 
 
-# @app.route('/editcustomer/<customerid>', methods = ['GET', 'POST'])
-# def editcustomer(customerid):
-#     customer = Customer.query.get(customerid)
-#     form = EditCustomerForm(obj=customer)
-#     if request.method== 'GET':
-#         form.populate_obj(customer)
-#     elif request.method == 'POST':
-#         if form.update.data and form.validate_on_submit():
-#             customer.customerfirstname = form.customerfirstname.data
-#             customer.customersurname = form.customersurname.data
-#             customer.email = form.email.data
-#             db.session.commit()
-#             flash ('Update was successful', 'success')
-#             return redirect(url_for('customers.customer',customerid= customerid))
-#         if form.cancel.data:
-#             return redirect(url_for('customers.customer',customerid = customerid))
-#         return render_template('customerpage.html', form=form)
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+        form = RegisterForm()
+        username = form.username.data
+        password = form.password.data
+        email = form.email.data
+
+        if form.validate_on_submit():
+                user = User.query.filter_by(username=username).first()
+                if not user:
+                        record = User(username=username, password=password, email=email)
+                        db.session.add(record)
+                        db.session.commit()
+                return redirect(url_for('login'))
+        else:
+                return render_template('register.html', form=form)
 
 
-# @app.route('/deletecustomer/<customerid>', methods= ['GET','POST'])
-# def deletecustomer(customerid):
-#     if customer.query.filter_by(customerid=customer).delete():
-#         db.session.commit()
-#         flash('Customer has been deleted', 'success')
-#         return redirect (url_for('customerpage.html'))
-#     return redirect(url_for('customerpage.html', customerid=customerid))
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+        form = LoginForm()
+        username = form.username.data
+        password = form.password.data
 
+        if form.validate_on_submit():
+                user = User.query.filter_by(username=username).first()
 
-# @app.route('/searchcustomer',methods=['GET','POST'])
-# def searchcustomer():
-#     customers=None
-#     target_string = request.form['search']
-#     customers = Customer.query.filter(Customer.title.contains(target_string)).all()
+                if user and user.verify_password(password):
+                        login_user(user)
+                        flash("User Logged In!")
+                        return redirect(url_for('loggedin'))
+                else:
+                        flash("Invalid Login")
+        else:
+                print(form.errors)
+        
+        return render_template('login.html', form=form)
 
-#     if target_string == "":
-#         search_msg = f'No matching customers found- displaying all {len(customers)} customers'
-#         color = 'danger'
-#     else:
-#         search_msg = f'{len(customers)} customers found'
-#         color = 'success'
-#     return render_template('customerpage.html',title = 'Search result', customers=customers, search_msg = search_msg, color=color)
+@login_manager.user_loader
+def get_user(id):
+        return User.query.get(id)
 
+class User(db.Model, UserMixin):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(10), unique=True, nullable=False)
+    password = db.Column(db.String(10))
+    email = db.Column(db.String(), unique=True, nullable=False)
 
+    def __init__(self, username, password, email):
+        self.username = username
+        self.password = generate_password_hash(password)
+        self.email = email
 
+    def __repr__(self):
+            return f'<User {self.username}>'
+
+    def verify_password(self,pwd):
+            return check_password_hash(self.password,pwd)
+
+@app.route("/")
+#@login_required
+def index():
+        return render_template('index.html')
+
+@app.route('/logout')
+def logout():
+        logout_user()
+        return redirect(url_for('login'))
 
 if __name__ == "__main__":
     app.run(debug=True)

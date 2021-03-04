@@ -1,4 +1,7 @@
 from flask_table import Table, Col, LinkCol
+# from app import db, login_manager
+# from flask_login import UserMixin
+# from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class CustomerResults(Table):
@@ -57,3 +60,24 @@ class AdminResults(Table):
         edit = LinkCol('Edit', 'editadmin', url_kwargs=dict(id = 'id'))
         delete = LinkCol('Delete', 'deleteadmin', url_kwargs=dict(id='id'))
         
+# @login_manager.user_loader
+# def get_user(user_id):
+#         return User.query.get(user_id)
+
+# class User(db.Model, UserMixin):
+#     __tablename__ = 'users'
+#     user_id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(10), unique=True, nullable=False)
+#     password = db.Column(db.String(10))
+#     email = db.Column(db.String(), unique=True, nullable=False)
+
+#     def __init__(self, username, password, name, email):
+#         self.username = username
+#         self.password = generate_password_hash(password)
+#         self.email = email
+
+#     def __repr__(self):
+#             return f'<User {self.username}>'
+
+#     def verify_password(self,pwd):
+#             return check_password_hash(self.password,pwd)
