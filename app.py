@@ -57,6 +57,8 @@ def signup():
                 apassword = request.form['apassword']
                 email = request.form['email']
                 
+                
+                
                 Admin = admin.query.filter_by(email=email).first()
                 if Admin:
                         message=f'User Already Created, please sign in or user another email'
@@ -136,22 +138,22 @@ def customerpage():
         #return render_template('customerpage.html', search=search, form=form)
         return render_template('customerpage.html', form=search)
 
-# #number 1
-@app.route('/customerresults')
-def searchcustomerresults(search):
-        results = []
-        search_string = search.data['search']
+# WORKING FOR ALL
+# @app.route('/customerresults')
+# def searchcustomerresults(search):
+#         results = []
+#         search_string = search.data['search']
  
-        if search.data['search']== '':
-                qry = db.session.query(customer)
-                results = qry.all()
-        if not results:
-                flash('No results found')
-                return redirect ('/customerpage')
-        else:
-                table = CustomerResults(results)
-                table.border = True
-                return render_template('results.html', table=table)
+#         if search.data['search']== '':
+#                 qry = db.session.query(customer)
+#                 results = qry.all()
+#         if not results:
+#                 flash('No results found')
+#                 return redirect ('/customerpage')
+#         else:
+#                 table = CustomerResults(results)
+#                 table.border = True
+#                 return render_template('results.html', table=table)
 
 
 
@@ -167,31 +169,31 @@ def allcustomer():
         table.border =True
         return render_template('allcustomer.html', table=table)
 
-
-# @app.route('/customerresults')
-# def searchcustomerresults(search):
-#         results = []
-#         search_string = search.data['search']
-#         if search_string:
-#                 if search.data['select']== 'customerid':
-#                         qry = db.session.query(customer, customerid).filter(customer.customerid==customer.customerid).filter(customer.customerid.contains(search_string))
-#                         results= [item[0] for item in qry.all()]
-#                 elif search.data ['select'] == 'customerfirstname':
-#                         qry = db.session.query(customer).filter(customer.customerfirstname.contains(search_string))
-#                         results = qry.all()
-#                 elif search.data ['select'] == 'customersurname':
-#                         qry = db.session.query(customer).filter(customer.customersurname.contains(search_string))
-#                         results = qry.all()
-#                 else:
-#                         qry = db.session.query(customer)
-#                         results = qry.all()
-#         if not results:
-#                 flash('No results found')
-#                 return redirect ('/customerpage')
-#         else:
-#                 table = CustomerResults(results)
-#                 table.border = True
-#                 return render_template('results.html', table=table)
+#works for customersurname
+@app.route('/customerresults')
+def searchcustomerresults(search):
+        results = []
+        search_string = search.data['search']
+        if search_string:
+                # if search.data['select']== 'customerid':
+                #         qry = db.session.query(customer, customerid).filter(customer.customerid==customer.customerid).filter(customer.customerid.contains(search_string))
+                #         results= [item[0] for item in qry.all()]
+                # elif search.data ['select'] == 'customerfirstname':
+                #         qry = db.session.query(customer).filter(customer.customerfirstname.contains(search_string))
+                #         results = qry.all()
+                if search.data ['select'] == 'customersurname':
+                        qry = db.session.query(customer).filter(customer.customersurname.contains(search_string))
+                        results = qry.all()
+                else:
+                        qry = db.session.query(customer)
+                        results = qry.all()
+        if not results:
+                flash('No results found, please try again')
+                return redirect ('/customerpage')
+        else:
+                table = CustomerResults(results)
+                table.border = True
+                return render_template('results.html', table=table)
 
 
 
@@ -364,22 +366,47 @@ def save_supplier(suppliername, form, new=False):
         if new:
                 db.session.add(suppliername)
         db.session.commit()
-        
 
-@app.route('/searchsupplier')
+
+#works for suppliername
+@app.route('/supplierresults')
 def searchsupplierresults(search):
         results = []
         search_string = search.data['search']
-        if search.data['search']== '':
-                qry = db.session.query(supplier)
-                results = qry.all()
+        if search_string:
+                if search.data ['select'] == 'suppliername':
+                        qry = db.session.query(supplier).filter(supplier.suppliername.contains(search_string))
+                        results = qry.all()
+                else:
+                        qry = db.session.query(supplier)
+                        results = qry.all()
         if not results:
-                flash('No results found')
-                return redirect('/supplierpage')
+                flash('No results found, please try again')
+                return redirect ('/supplierpage')
         else:
                 table = SupplierResults(results)
                 table.border = True
                 return render_template('results.html', table=table)
+
+
+
+
+
+#### ONLY FOR ALL
+# @app.route('/searchsupplier')
+# def searchsupplierresults(search):
+#         results = []
+#         search_string = search.data['search']
+#         if search.data['search']== '':
+#                 qry = db.session.query(supplier)
+#                 results = qry.all()
+#         if not results:
+#                 flash('No results found')
+#                 return redirect('/supplierpage')
+#         else:
+#                 table = SupplierResults(results)
+#                 table.border = True
+#                 return render_template('results.html', table=table)
 
 
 
@@ -575,19 +602,18 @@ def save_stock(stockid, form, new=False):
                 db.session.add(stockid)
         db.session.commit()
 
-
-
-
-
-
+#not working yet need to leave the house!
 @app.route('/stockresults')
 def searchstockresults(search):
         results = []
         search_string = search.data['search']
-
-        if search.data['search']== '':
-                qry = db.session.query(stock)
-                results = qry.all()
+        if search_string:
+                if search.data ['select'] == 'stockid':
+                        qry = db.session.query(stock).filter(stock.stockid.contains(search_string))
+                        results = qry.all()
+                if search.data['search']== '':
+                        qry = db.session.query(stock)
+                        results = qry.all()
         if not results:
                 flash('No results found')
                 return redirect ('/stockpage')
@@ -595,6 +621,25 @@ def searchstockresults(search):
                 table = StockResults(results)
                 table.border = True
                 return render_template('results.html', table=table)
+
+
+
+
+# @app.route('/stockresults')
+# def searchstockresults(search):
+#         results = []
+#         search_string = search.data['search']
+
+#         if search.data['search']== '':
+#                 qry = db.session.query(stock)
+#                 results = qry.all()
+#         if not results:
+#                 flash('No results found')
+#                 return redirect ('/stockpage')
+#         else:
+#                 table = StockResults(results)
+#                 table.border = True
+#                 return render_template('results.html', table=table)
 
 
 
@@ -717,21 +762,48 @@ def save_solditem(solditemid, form, new=False):
         db.session.commit()
 
 
+
 @app.route('/solditemresults')
 def searchsolditemresults(search):
         results = []
         search_string = search.data['search']
+        if search_string:
+                if search.data ['select'] == 'customersurname':
+                        qry = db.session.query(solditem).filter(solditem.customersurname.contains(search_string))
+                        results = qry.all()
+                        table = SoldItemResults(results)
+                        table.border = True
+                        return render_template('results.html', table=table)
+                else:
+                        message('No Results found, try again or click all customers')
+                        return render_template('customerpage.html', message=message)
 
-        if search.data['search']== '':
-                qry = db.session.query(solditem)
-                results = qry.all()
-        if not results:
-                flash('No results found')
-                return redirect ('/solditempage')
-        else:
-                table = SoldItemResults(results)
-                table.border = True
-                return render_template('results.html', table=table)
+
+
+                        # qry = db.session.query(solditem).filter(solditem.customersurname.contains(search_string))
+                        # results = qry.all()
+                        # table = SoldItemResults(results)
+                        # table.border = True
+                        # return render_template('results.html', table=table)
+
+
+
+
+# @app.route('/solditemresults')
+# def searchsolditemresults(search):
+#         results = []
+#         search_string = search.data['search']
+
+#         if search.data['search']== '':
+#                 qry = db.session.query(solditem)
+#                 results = qry.all()
+#         if not results:
+#                 flash('No results found')
+#                 return redirect ('/solditempage')
+#         else:
+#                 table = SoldItemResults(results)
+#                 table.border = True
+#                 return render_template('results.html', table=table)
 
 
 
