@@ -1015,8 +1015,7 @@ def alllisting():
 #                 ausername = request.form['ausername']
 
 
-@app.route('/login_required')
-def login_required
+
 
 
 @app.route('/register', methods=['GET', 'POST'])
