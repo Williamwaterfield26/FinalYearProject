@@ -162,22 +162,6 @@ class AddListingForm(FlaskForm):
 
 
 
-
-
-class AddAdminForm(FlaskForm):
-    id = HiddenField()
-    ausername = StringField('Username', [InputRequired(),
-    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Username"),
-    ])
-    apassword = StringField('Password', [InputRequired(),
-    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Password"),
-    ])
-    email = StringField('Email',[InputRequired(),
-    #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
-    ])
-    submit = SubmitField('Sign Up')
-    
-
 #class CustomerSearchForm(Form):
     # choices = [('customerid', 'customerid'), ('customerfirstname'), ('customersurname', 'customersurname'), ('email','email')]
     # select = SelectField ('Search for a customer', choices=choices)
@@ -291,16 +275,16 @@ class DeleteStockForm(FlaskForm):
 
 
 
-class AdminSearchForm(FlaskForm):
-    choices = [('ausername','ausername')]
-    select = SelectField('Search for an Admin', choices=choices)
+class UserSearchForm(FlaskForm):
+    choices = [('username','username')]
+    select = SelectField('Search for an User', choices=choices)
     search = StringField('')
 
-class EditAdminForm(FlaskForm):
-    ausername = StringField('Username', [InputRequired(),
+class EditUserForm(FlaskForm):
+    username = StringField('Username', [InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Username"),
     ])
-    apassword = StringField('Password', [InputRequired(),
+    password = StringField('Password', [InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Password"),
     ])
     email = StringField('Email',[InputRequired(),
@@ -308,9 +292,9 @@ class EditAdminForm(FlaskForm):
     ])
     update = SubmitField('Update')
 
-class DeleteAdminForm(FlaskForm):
-    ausername = ('Username')
-    apassword = ('Password')
+class DeleteUserForm(FlaskForm):
+    username = ('Username')
+    password = ('Password')
     email = ('Email')
     delete = SubmitField('Delete')
 

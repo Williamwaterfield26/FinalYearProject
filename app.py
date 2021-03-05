@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, redirect, request, flash, Blueprint
-from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddAdminForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteLitingForm, StockSearchForm, EditStockForm, DeleteStockForm, AddSoldItemForm, DeleteSoldItemForm, EditSoldItemForm, SoldItemSearchForm, AdminSearchForm, EditAdminForm, DeleteAdminForm, RegisterForm, LoginForm
+from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddUserForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteLitingForm, StockSearchForm, EditStockForm, DeleteStockForm, AddSoldItemForm, DeleteSoldItemForm, EditSoldItemForm, SoldItemSearchForm, UserSearchForm, EditUserForm, DeleteUserForm, RegisterForm, LoginForm
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -12,7 +12,7 @@ from flask_table import Table, Col, LinkCol
 from django import forms
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
-from tables import CustomerResults, SupplierResults, ListingResults, StockResults, SoldItemResults, AdminResults
+from tables import CustomerResults, SupplierResults, ListingResults, StockResults, SoldItemResults, UserResults
 from werkzeug.security import generate_password_hash, check_password_hash
 #from models import customer
 from flask_login import login_user, login_required, logout_user
@@ -31,82 +31,7 @@ migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db',MigrateCommand)
 
-# @app.route('/')
-# def index():
-#     return render_template('index.html')
 
-# class admin(UserMixin, db.Model):
-#         id = db.Column(db.Integer, primary_key=True)
-#         ausername = db.Column(db.String(10), nullable= False, unique = True)
-#         apassword = db.Column(db.String(10))
-#         email = db.Column(db.String)
-
-
-# @app.route('/signin', methods= ['GET','POST'])
-# def signin():
-#     form = SignInForm()
-#     if form.validate_on_submit():
-#             ausername= request.form['ausername']
-#             apassword= request.form['apassword']
-#             #remember = True if request.form.get('remember') else False
-            
-#             record = admin.query.filter_by(ausername=ausername).first()
-#             if not admin or not check_password_hash(admin.apassword, apassword):
-#                     flash('Please check your login details and try again.')
-#                     return redirect(url_for('signin.html'))
-#             return redirect(url_for('loggedin.html'))
-#     return render_template('signin.html', form=form)
-
-# @app.route('/signup', methods=['GET', 'POST'])
-# def signup():
-#         form = AddAdminForm()
-#         if form.validate_on_submit():
-#                 ausername = request.form['ausername']
-#                 apassword = request.form['apassword']
-#                 email = request.form['email']
-                
-                
-                
-#                 Admin = admin.query.filter_by(email=email).first()
-#                 if Admin:
-#                         message=f'User Already Created, please sign in or user another email'
-#                         return render_template('signup.html', message=message, form=form)
-#                 # else:
-
-#                 record = admin(ausername= ausername, apassword= generate_password_hash(apassword, method = 'sha256'), email= email)
-#                 db.session.add(record)
-#                 db.session.commit()
-#                 message = f"User has been created"
-#                 return render_template('signin.html', message=message,form=form)
-#         else:
-#                 #show validation
-#                 for field, errors in form.errors.items():
-#                         for error in errors:
-#                                 flash("Error in {}: {}".format(
-#                                         getattr(form, field).label.text,
-#                                         error
-#                                 ), 'error')
-#                 return render_template('signup.html', form=form)
-
-
-#hi
-#@app.route('/signup', methods=['GET', 'POST'])
-#def signup():
-#        form = AddAdminForm()
-#        if form.validate_on_submit:
-#                ausername = request.form['ausername']
-#                apassword = request.form['apassword']
-#                email = request.form['email']
-#                #record = Admin(ausername= ausername, apassword= generate_password_hash(apassword, method = 'sha256'), email= email)
-#                new_admin = Admin(ausername= ausername, apassword= generate_password_hash(apassword, method = 'sha256'), email= email)
-#                db.session.add(new_admin)
-#                db.session.commit()
-#                return redirect(url_for('/signin'))
-#        else:   
- #               if admin:
-#
- #                       admin = Admin.query.filter_by(ausername=ausername).first()
-#                        return redirect(url_for('/signup'))
 
 
 @app.route('/preregistereduser')
@@ -125,11 +50,13 @@ def registered():
 
 
 @app.route('/loggedin')
+@login_required
 def loggedin():
         return render_template('loggedin.html')
 
 
 @app.route('/supplierpage', methods = ['GET', 'POST'])
+@login_required
 def supplierpage():
         search = SupplierSearchForm(request.form)
         if request.method == 'POST':
@@ -139,6 +66,7 @@ def supplierpage():
 
 
 @app.route('/customerpage', methods = ['GET', 'POST'])
+@login_required
 def customerpage():
         #form = CustomerSearchForm()
         search = CustomerSearchForm(request.form)
@@ -148,22 +76,6 @@ def customerpage():
         #return render_template('customerpage.html', search=search, form=form)
         return render_template('customerpage.html', form=search)
 
-# WORKING FOR ALL
-# @app.route('/customerresults')
-# def searchcustomerresults(search):
-#         results = []
-#         search_string = search.data['search']
- 
-#         if search.data['search']== '':
-#                 qry = db.session.query(customer)
-#                 results = qry.all()
-#         if not results:
-#                 flash('No results found')
-#                 return redirect ('/customerpage')
-#         else:
-#                 table = CustomerResults(results)
-#                 table.border = True
-#                 return render_template('results.html', table=table)
 
 
 
@@ -171,6 +83,7 @@ def customerpage():
 
 
 @app.route('/allcustomer')
+@login_required
 def allcustomer():
         results=[]
         qry = db.session.query(customer)
@@ -181,16 +94,11 @@ def allcustomer():
 
 #works for customersurname
 @app.route('/customerresults')
+@login_required
 def searchcustomerresults(search):
         results = []
         search_string = search.data['search']
         if search_string:
-                # if search.data['select']== 'customerid':
-                #         qry = db.session.query(customer, customerid).filter(customer.customerid==customer.customerid).filter(customer.customerid.contains(search_string))
-                #         results= [item[0] for item in qry.all()]
-                # elif search.data ['select'] == 'customerfirstname':
-                #         qry = db.session.query(customer).filter(customer.customerfirstname.contains(search_string))
-                #         results = qry.all()
                 if search.data ['select'] == 'customersurname':
                         qry = db.session.query(customer).filter(customer.customersurname.contains(search_string))
                         results = qry.all()
@@ -212,6 +120,7 @@ def searchcustomerresults(search):
 
 #@app.route('/editcustomer',methods=['GET', 'POST'])
 @app.route('/editcustomer/<int:customerid>', methods=['GET', 'POST'])
+@login_required
 #@app.route('/editcustomer/<customerid>',methods=['GET', 'POST'])
 def editcustomer(customerid):
         qry = db.session.query(customer).filter( customer.customerid == customerid)
@@ -242,17 +151,17 @@ def save_customer(customersurname, form, new=False):
 
 
 @app.route('/results')
+@login_required
 def results():
         return render_template('results.html')
 
 
-@app.route('/userpage')
-def userpage():
-        return render_template('userpage.html')
+
 
 
 
 @app.route('/listingpage',methods = ['GET', 'POST'])
+@login_required
 def listingpage():
         search = ListingSearchForm(request.form)
         if request.method == 'POST':
@@ -262,6 +171,7 @@ def listingpage():
 
 
 @app.route('/stockpage', methods = ['GET', 'POST'])
+@login_required
 def stockpage():
         search = StockSearchForm(request.form)
         if request.method == 'POST':
@@ -270,6 +180,7 @@ def stockpage():
 
 
 @app.route('/solditempage', methods = ['GET', 'POST'])
+@login_required
 def solditempage():
         search = SoldItemSearchForm(request.form)
         if request.method == 'POST':
@@ -277,9 +188,7 @@ def solditempage():
         return render_template('solditempage.html', form=search)
 
 
-@app.route('/logoff')
-def logoff():
-        return render_template('logoff.html')
+
         
         
 class supplier(db.Model):
@@ -294,6 +203,7 @@ class supplier(db.Model):
 
 
 @app.route('/addsupplier', methods=['GET', 'POST'])
+@login_required
 def addsupplier():
         form = AddSupplierForm()
         if form.validate_on_submit():
@@ -318,6 +228,7 @@ def addsupplier():
 
 
 @app.route('/deletesupplier/<int:supplierid>', methods=['GET', 'POST'])
+@login_required
 def deletesupplier(supplierid):
         qry = db.session.query(supplier).filter(supplier.supplierid==supplierid)
         suppliername = qry.first()
@@ -334,6 +245,7 @@ def deletesupplier(supplierid):
 
 
 @app.route('/allsupplier')
+@login_required
 def allsupplier():
         results=[]
         qry = db.session.query(supplier)
@@ -345,17 +257,8 @@ def allsupplier():
 
 
 
-
-
-
-
-
-
-
-
-
-
 @app.route('/editsupplier/<int:supplierid>',methods= ['GET','POST'])
+@login_required
 def editsupplier(supplierid):
         qry = db.session.query(supplier).filter(supplier.supplierid== supplierid)
         suppliername = qry.first()
@@ -380,6 +283,7 @@ def save_supplier(suppliername, form, new=False):
 
 #works for suppliername
 @app.route('/supplierresults')
+@login_required
 def searchsupplierresults(search):
         results = []
         search_string = search.data['search']
@@ -400,32 +304,6 @@ def searchsupplierresults(search):
 
 
 
-
-
-#### ONLY FOR ALL
-# @app.route('/searchsupplier')
-# def searchsupplierresults(search):
-#         results = []
-#         search_string = search.data['search']
-#         if search.data['search']== '':
-#                 qry = db.session.query(supplier)
-#                 results = qry.all()
-#         if not results:
-#                 flash('No results found')
-#                 return redirect('/supplierpage')
-#         else:
-#                 table = SupplierResults(results)
-#                 table.border = True
-#                 return render_template('results.html', table=table)
-
-
-
-
-
-
-
-
-
 class customer(db.Model):
     __tablename__ = 'customers'
     customerid = db.Column(db.Integer, primary_key = True)
@@ -441,6 +319,7 @@ class customer(db.Model):
 
 
 @app.route('/addcustomer', methods=['GET', 'POST'])
+@login_required
 def addcustomer():
         form = AddCustomerForm()
         if form.validate_on_submit():
@@ -470,6 +349,7 @@ def addcustomer():
 
 # Delete customer from database which matches the ID
 @app.route('/deletecustomer/<int:customerid>', methods=['GET','POST'])
+@login_required
 def deletecustomer(customerid):
         qry = db.session.query(customer).filter(customer.customerid==customerid)
         customersurname = qry.first()
@@ -483,18 +363,6 @@ def deletecustomer(customerid):
                 return render_template('deletecustomer.html', form=form)
         else:
                 return 'Error deleting customer'.format (customerid=customerid)
-
-
-
-# @app.route('/editcustomer')
-# def editcustomer():
-#         return render_template('editcustomer.html')
-
-# @app.route('/searchcustomer')
-# def searchcustomer():
-#         return render_template('searchcustomer.html')
-
-
 
 
 
@@ -525,6 +393,7 @@ class stock(db.Model):
 
 
 @app.route('/addstock', methods=['GET', 'POST'])
+@login_required
 def addstock():
         form = AddStockForm()
         if form.validate_on_submit():
@@ -556,6 +425,7 @@ def addstock():
 
 
 @app.route('/deletestock/<int:stockid>', methods=['GET','POST'])
+@login_required
 def deletestock(stockid):
         qry = db.session.query(stock).filter(stock.stockid==stockid)
         stockid = qry.first()
@@ -572,6 +442,7 @@ def deletestock(stockid):
 
 
 @app.route('/editstock/<int:stockid>', methods=['GET', 'POST'])
+@login_required
 def editstock(stockid):
         qry = db.session.query(stock).filter( stock.stockid == stockid)
         stockid = qry.first()
@@ -590,6 +461,7 @@ def editstock(stockid):
 
 
 @app.route('/allstock')
+@login_required
 def allstock():
         results=[]
         qry = db.session.query(stock)
@@ -614,6 +486,7 @@ def save_stock(stockid, form, new=False):
 
 #not working yet need to leave the house!
 @app.route('/stockresults')
+@login_required
 def searchstockresults(search):
         results = []
         search_string = search.data['search']
@@ -633,23 +506,6 @@ def searchstockresults(search):
                 return render_template('results.html', table=table)
 
 
-
-
-# @app.route('/stockresults')
-# def searchstockresults(search):
-#         results = []
-#         search_string = search.data['search']
-
-#         if search.data['search']== '':
-#                 qry = db.session.query(stock)
-#                 results = qry.all()
-#         if not results:
-#                 flash('No results found')
-#                 return redirect ('/stockpage')
-#         else:
-#                 table = StockResults(results)
-#                 table.border = True
-#                 return render_template('results.html', table=table)
 
 
 
@@ -679,6 +535,7 @@ class solditem(db.Model):
 
 
 @app.route('/addsolditem', methods=['GET', 'POST'])
+@login_required
 def addsolditem():
         form = AddSoldItemForm()
         if form.validate_on_submit():
@@ -711,6 +568,7 @@ def addsolditem():
 
 
 @app.route('/deletesolditem/<int:solditemid>', methods=['GET','POST'])
+@login_required
 def deletesolditem(solditemid):
         qry = db.session.query(solditem).filter(solditem.solditemid==solditemid)
         solditemid = qry.first()
@@ -727,6 +585,7 @@ def deletesolditem(solditemid):
 
 
 @app.route('/editsolditem/<int:solditemid>', methods=['GET', 'POST'])
+@login_required
 def editsolditem(solditemid):
         qry = db.session.query(solditem).filter( solditem.solditemid == solditemid)
         solditemid = qry.first()
@@ -748,6 +607,7 @@ def editsolditem(solditemid):
         # delete = LinkCol('Delete', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
 
 @app.route('/allsolditem')
+@login_required
 def allsolditem():
         results=[]
         qry = db.session.query(solditem)
@@ -774,6 +634,7 @@ def save_solditem(solditemid, form, new=False):
 
 
 @app.route('/solditemresults')
+@login_required
 def searchsolditemresults(search):
         results = []
         search_string = search.data['search']
@@ -781,21 +642,17 @@ def searchsolditemresults(search):
                 if search.data ['select'] == 'customersurname':
                         qry = db.session.query(solditem).filter(solditem.customersurname.contains(search_string))
                         results = qry.all()
-                        table = SoldItemResults(results)
-                        table.border = True
-                        return render_template('results.html', table=table)
-                else:
-                        message('No Results found, try again or click all customers')
-                        return render_template('customerpage.html', message=message)
-
-
-
-                        # qry = db.session.query(solditem).filter(solditem.customersurname.contains(search_string))
-                        # results = qry.all()
                         # table = SoldItemResults(results)
                         # table.border = True
                         # return render_template('results.html', table=table)
 
+        if not results:
+                flash('No results found')
+                return redirect ('/solditempage')
+        else:
+                table = SoldItemResults(results)
+                table.border = True
+                return render_template('results.html', table=table)
 
 
 
@@ -817,86 +674,91 @@ def searchsolditemresults(search):
 
 
 
-@app.route('/adminresults')
-def searchadminresults(search):
+@app.route('/userresults')
+@login_required
+def searchuserresults(search):
         results = []
         search_string = search.data['search']
  
         if search.data['search']== '':
-                qry = db.session.query(admin)
+                qry = db.session.query(user)
                 results = qry.all()
         if not results:
                 flash('No results found')
-                return redirect ('/adminpage')
+                return redirect ('/userpage')
         else:
-                table = AdminResults(results)
+                table = UserResults(results)
                 table.border = True
                 return render_template('results.html', table=table)
 
 
-@app.route('/alladmin')
-def alladmin():
+@app.route('/alluser')
+@login_required
+def alluser():
         results=[]
-        qry = db.session.query(admin)
+        qry = db.session.query(user)
         results = qry.all()
-        table=AdminResults(results)
+        table=UserResults(results)
         table.border =True
-        return render_template('alladmin.html', table=table)
+        return render_template('alluser.html', table=table)
 
 
-@app.route('/adminpage', methods = ['GET', 'POST'])
-def adminpage():
-        search = AdminSearchForm(request.form)
+@app.route('/userpage', methods = ['GET', 'POST'])
+@login_required
+def userpage():
+        search = UserSearchForm(request.form)
         if request.method == 'POST':
-                return searchadminresults(search)
+                return searchuserresults(search)
 
-        return render_template('adminpage.html', form=search)
+        return render_template('userpage.html', form=search)
 
 
-@app.route('/editadmin/<int:id>', methods=['GET', 'POST'])
-def editadmin(id):
-        qry = db.session.query(admin).filter( admin.id == id)
-        ausername = qry.first()
-        if ausername:
-                form = EditAdminForm(formdata=request.form, obj = ausername)
+@app.route('/edituser/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edituser(id):
+        qry = db.session.query(user).filter( user.id == id)
+        username = qry.first()
+        if username:
+                form = EditUserForm(formdata=request.form, obj = username)
                 if request.method == 'POST' and form.validate():
-                        save_admin(ausername,form)
+                        save_user(username,form)
 
-                        flash ('Admin updated!')
-                        return redirect ('/adminpage')
-                return render_template('adminpage.html', form=form)
+                        flash ('User updated!')
+                        return redirect ('/userpage')
+                return render_template('userpage.html', form=form)
         else:
-                return 'Error loading the admin'.format(id=id)
+                return 'Error loading the user'.format(id=id)
 
 
 
 
-def save_admin(ausername, form, new=False):
-        ausername.ausername = form.ausername.data
-        ausername.apassword = form.apassword.data
-        ausername.email = form.email.data
+def save_user(username, form, new=False):
+        username.username = form.username.data
+        username.password = form.password.data
+        username.email = form.email.data
 
         if new:
-                record = admin(ausername= ausername, apassword= generate_password_hash(apassword, method = 'sha256'), email= email)
-                db.session.add(ausername)
+                record = user(username= username, password= generate_password_hash(apassword, method = 'sha256'), email= email)
+                db.session.add(username)
         db.session.commit()
 
 
 
-@app.route('/deleteadmin<int:id>', methods=['GET', 'POST'])
-def deleteadmin(listingid):
-        qry = db.session.query(admin).filter(admin.id==listingid)
-        ausername = qry.first()
-        if ausername:
-                form = DeleteAdminForm(formdata=request.form, obj=admin)
+@app.route('/deleteuser<int:id>', methods=['GET', 'POST'])
+@login_required
+def deleteuser(id):
+        qry = db.session.query(user).filter(user.id==id)
+        username = qry.first()
+        if username:
+                form = DeleteUserForm(formdata=request.form, obj=user)
                 if request.method == 'POST' and form.validate():
                         db.session.delete(id)
                         db.session.commit()
-                        flash('Admin deleted succesfully!')
-                        return redirect('/adminpage')
-                return render_template('deleteadmin.html', form=form)
+                        flash('User deleted succesfully!')
+                        return redirect('/userpage')
+                return render_template('deleteuser.html', form=form)
         else:
-                return 'Error deleting Admin'. format(id=id)
+                return 'Error deleting User'. format(id=id)
 
 
 
@@ -914,6 +776,7 @@ class listing(db.Model):
 
 
 @app.route('/addlisting', methods=['GET', 'POST'])
+@login_required
 def addlisting():
         form = AddListingForm()
         if form.validate_on_submit():
@@ -937,6 +800,7 @@ def addlisting():
 
 
 @app.route('/deletelisting<int:listingid>', methods=['GET', 'POST'])
+@login_required
 def deletelisting(listingid):
         qry = db.session.query(listing).filter(listing.listingid==listingid)
         supplierid = qry.first()
@@ -953,6 +817,7 @@ def deletelisting(listingid):
         
 
 @app.route('/editlisting<int:listingid>', methods=['GET', 'POST'])
+@login_required
 def editlisting(listingid):
         qry = db.session.query(listing).filter(listing.listingid==listingid)
         supplierid = qry.first()
@@ -974,6 +839,7 @@ def save_listing(supplierid, form, new=False):
         db.session.commit()
 
 @app.route('/listingresults')
+@login_required
 def searchlistingresults(search):
         results=[]
         search_string = search.data['search']
@@ -991,6 +857,7 @@ def searchlistingresults(search):
 
 
 @app.route('/alllisting')
+@login_required
 def alllisting():
         results=[]
         qry = db.session.query(listing)
@@ -1087,6 +954,11 @@ def index():
 def logout():
         logout_user()
         return redirect(url_for('login'))
+
+@app.route('/currentuser', methods=['GET'])
+@login_required
+def currentuser():
+        return render_template('currentuser.html')
 
 if __name__ == "__main__":
     app.run(debug=True)
