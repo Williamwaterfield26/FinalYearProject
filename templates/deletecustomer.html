@@ -2,24 +2,15 @@
 {% extends "base.html"%}
 
 {% block head %} 
-<title>Delete Customer</title>
+
 {% endblock %}
 
 {% block body %}
 {{ wtf.quick_form(form) }}
-{% from "_formhelpers.html" import render_field %}
-<form method="post">
-    <dl>
-        {{ render_field(form.customerfirstname) }}
-        {{ render_field(form.customersurname) }}
-        {{ render_field(form.email) }}
-    </dl>
-    <p><input type="submit" value="Delete">
-</p></form>
-
-
+<p><input type ="submit" value = "Submit">
 <div class="back">
-    <a href="./customerpage.html"><button>Back</button></a>
+    <a href="./customerpage"><button>Back</button></a>
 
 </div>
+
 {% endblock %}

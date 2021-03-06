@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, redirect, request, flash, Blueprint
-from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddUserForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteLitingForm, StockSearchForm, EditStockForm, DeleteStockForm, AddSoldItemForm, DeleteSoldItemForm, EditSoldItemForm, SoldItemSearchForm, UserSearchForm, EditUserForm, DeleteUserForm, RegisterForm, LoginForm
+from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddUserForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteListingForm, StockSearchForm, EditStockForm, DeleteStockForm, AddSoldItemForm, DeleteSoldItemForm, EditSoldItemForm, SoldItemSearchForm, UserSearchForm, EditUserForm, DeleteUserForm, RegisterForm, LoginForm
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -227,13 +227,14 @@ def addsupplier():
 
 
 
+
 @app.route('/deletesupplier/<int:supplierid>', methods=['GET', 'POST'])
 @login_required
 def deletesupplier(supplierid):
         qry = db.session.query(supplier).filter(supplier.supplierid==supplierid)
         suppliername = qry.first()
         if suppliername:
-                form = DeleteSupplierForm(formdata=request.form, obj=supplier)
+                form = DeleteSupplierForm(formdata=request.form, obj=suppliername)
                 if request.method == 'POST' and form.validate():
                         db.session.delete(suppliername)
                         db.session.commit()
@@ -352,21 +353,21 @@ def addcustomer():
 
 
 # Delete customer from database which matches the ID
-@app.route('/deletecustomer/<int:customerid>', methods=['GET','POST'])
+@app.route('/deletecustomer/<int:customerid>', methods=['GET', 'POST'])
 @login_required
 def deletecustomer(customerid):
-        qry = db.session.query(customer).filter(customer.customerid==customerid)
+        qry = db.session.query(customer).filter( customer.customerid == customerid)
         customersurname = qry.first()
         if customersurname:
-                form = DeleteCustomerForm(formdata=request.form, obj=customer)
+                form = DeleteCustomerForm(formdata=request.form, obj=customersurname)
                 if request.method == 'POST' and form.validate():
                         db.session.delete(customersurname)
                         db.session.commit()
                         flash('Customer deleted successfully!')
                         return redirect('/customerpage')
-                return render_template('deletecustomer.html', form=form)
+                return render_template('customerpage.html', form=form)
         else:
-                return 'Error deleting customer'.format (customerid=customerid)
+                return 'Error deleting customer'.format(customerid=customerid)
 
 
 
@@ -430,13 +431,15 @@ def addstock():
                 return render_template('addstock.html', form=form)
 
 
+
+
 @app.route('/deletestock/<int:stockid>', methods=['GET','POST'])
 @login_required
 def deletestock(stockid):
         qry = db.session.query(stock).filter(stock.stockid==stockid)
         stockid = qry.first()
         if stockid:
-                form = DeleteStockForm(formdata=request.form, obj=stock)
+                form = DeleteStockForm(formdata=request.form, obj=stockid)
                 if request.method == 'POST' and form.validate():
                         db.session.delete(stockid)
                         db.session.commit()
@@ -587,7 +590,7 @@ def deletesolditem(solditemid):
         qry = db.session.query(solditem).filter(solditem.solditemid==solditemid)
         customersurname = qry.first()
         if customersurname:
-                form = DeleteSoldItemForm(formdata=request.form, obj=solditem)
+                form = DeleteSoldItemForm(formdata=request.form, obj=customersurname)
                 if request.method == 'POST' and form.validate():
                         db.session.delete(customersurname)
                         db.session.commit()
@@ -803,9 +806,9 @@ def deleteuser(id):
         qry = db.session.query(User).filter(User.id==id)
         username = qry.first()
         if username:
-                form = DeleteUserForm(formdata=request.form, obj=User)
+                form = DeleteUserForm(formdata=request.form, obj=username)
                 if request.method == 'POST' and form.validate():
-                        db.session.delete(id)
+                        db.session.delete(username)
                         db.session.commit()
                         flash('User deleted succesfully!')
                         return redirect('/userpage')
@@ -852,21 +855,24 @@ def addlisting():
         return render_template('addlisting.html', form=form)
 
 
+
+
+
 @app.route('/deletelisting<int:listingid>', methods=['GET', 'POST'])
 @login_required
 def deletelisting(listingid):
         qry = db.session.query(listing).filter(listing.listingid==listingid)
         supplierid = qry.first()
         if supplierid:
-                form = DeleteLitingForm(formdata=request.form, obj=listing)
+                form = DeleteListingForm(formdata=request.form, obj=supplierid)
                 if request.method == 'POST' and form.validate():
                         db.session.delete(supplierid)
                         db.session.commit()
                         flash('Listing deleted succesfully!')
                         return redirect('/listingpage')
-                return render_template('deletelisting.html', form=form)
+                return render_template('listingpage.html', form=form)
         else:
-                return 'Error deleting listing'. format(listingid=listingid)
+                return 'Error deleting listing'.format(listingid=listingid)
         
 
 @app.route('/editlisting<int:listingid>', methods=['GET', 'POST'])

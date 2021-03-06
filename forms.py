@@ -75,14 +75,14 @@ class AddSoldItemForm(FlaskForm):
     submit = SubmitField('Add Sold Item')
 
 class DeleteSoldItemForm(FlaskForm):
-    customerfirstname =('Customer Firstname')
-    customersurname = ('Customer Surname')
-    email = ('Email')
-    stockid =('Stock ID')
-    price = ('Price')
-    supplierid = ('Supplier ID')
-    suppliername = ('Supplier Name')
-    delete = ('Delete')
+    customerfirstname =StringField('Customer Firstname')
+    customersurname = StringField('Customer Surname')
+    email = StringField('Email')
+    stockid =IntegerField('Stock ID')
+    price = IntegerField('Price')
+    supplierid = IntegerField('Supplier ID')
+    suppliername = StringField('Supplier Name')
+    delete = SubmitField('Delete')
 
 
 
@@ -193,11 +193,15 @@ class EditCustomerForm(FlaskForm):
     update = SubmitField('Update')
     cancel = SubmitField('Cancel')
 
+    # customerfirstname =StringField('Customer Firstname')
+    # customersurname =StringField('Customer Surname')
+    # email =StringField('Email')
+
 
 class DeleteCustomerForm(FlaskForm):
-    customerfirstname =('Customer Firstname')
-    customersurname =('Customer Surname')
-    email =('Email')
+    customerfirstname =StringField('Customer Firstname')
+    customersurname =StringField('Customer Surname')
+    email =StringField('Email')
     delete = SubmitField('Delete')
 
 
@@ -209,7 +213,7 @@ class EditSupplierForm(FlaskForm):
     cancel = SubmitField('Cancel')
 
 class DeleteSupplierForm(FlaskForm):
-    suppliername= ('Supplier Name')
+    suppliername= StringField('Supplier Name')
     delete = SubmitField('Delete')
 
 class SupplierSearchForm(FlaskForm):
@@ -228,9 +232,11 @@ class EditListingForm(FlaskForm):
     update = SubmitField('Update')
     cancel = SubmitField('Cancel')
 
-class DeleteLitingForm(FlaskForm):
-    supplierid= ('Supplier ID')
-    price= ('Price')
+
+
+class DeleteListingForm(FlaskForm):
+    supplierid= IntegerField('Supplier ID')
+    price= IntegerField('Price')
     delete = SubmitField('Delete')
 
 class ListingSearchForm(FlaskForm):
@@ -270,13 +276,13 @@ class StockSearchForm(FlaskForm):
     search = StringField('')
 
 class DeleteStockForm(FlaskForm):
-    size= ('size')
-    type= ('type')
-    colour = ('colour')
-    brand = ('brand')
-    price = ('price')
-    supplierid =('supplierid')
-    material = ('material')
+    size= StringField('size')
+    type= StringField('type')
+    colour = StringField('colour')
+    brand = StringField('brand')
+    price = IntegerField('price')
+    supplierid =IntegerField('supplierid')
+    material = StringField('material')
     delete = SubmitField('Delete')
 
 
@@ -299,9 +305,8 @@ class EditUserForm(FlaskForm):
     update = SubmitField('Update')
 
 class DeleteUserForm(FlaskForm):
-    username = ('Username')
-    password = ('Password')
-    email = ('Email')
+    username = StringField('Username')
+    email = StringField('Email')
     delete = SubmitField('Delete')
 
 class LoginForm(FlaskForm):

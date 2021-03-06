@@ -2,16 +2,15 @@
 {% extends "base.html"%}
 
 {% block head %} 
-<title>Delete Stock</title>
+
 {% endblock %}
 
 {% block body %}
 {{ wtf.quick_form(form) }}
-
-
-
+<p><input type ="submit" value = "Submit">
 <div class="back">
-    <a href="./stockpage.html"><button>Back</button></a>
+    <a href="./stockpage"><button>Back</button></a>
 
 </div>
+
 {% endblock %}
