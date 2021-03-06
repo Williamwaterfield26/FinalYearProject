@@ -8,10 +8,20 @@
 {% endblock %}
 
 {% block body %}
-<h2>User Page</h2>
+<h2>User Page</h2S>
 <br>
 </br>
 {{ wtf.quick_form(form) }}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    <ul class="flash">
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+{% endwith %}
+<a href="./adduser"><button>Add User</button></a>
 <a href="./alluser"><button>Show All Users</button></a>
 <div class="back">
     <a href="./loggedin"><button>Back</button></a>

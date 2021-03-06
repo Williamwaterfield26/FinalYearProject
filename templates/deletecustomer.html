@@ -7,7 +7,15 @@
 
 {% block body %}
 {{ wtf.quick_form(form) }}
-
+{% from "_formhelpers.html" import render_field %}
+<form method="post">
+    <dl>
+        {{ render_field(form.customerfirstname) }}
+        {{ render_field(form.customersurname) }}
+        {{ render_field(form.email) }}
+    </dl>
+    <p><input type="submit" value="Delete">
+</p></form>
 
 
 <div class="back">

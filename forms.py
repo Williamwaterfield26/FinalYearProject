@@ -44,7 +44,7 @@ class AddCustomerForm(FlaskForm):
     email = StringField('Email',[InputRequired(),
     #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
     ])
-    submit = SubmitField ('Add Customer')
+    submit = SubmitField ('Add')
 
 
 class AddSoldItemForm(FlaskForm):
@@ -78,10 +78,13 @@ class DeleteSoldItemForm(FlaskForm):
     customerfirstname =('Customer Firstname')
     customersurname = ('Customer Surname')
     email = ('Email')
+    stockid =('Stock ID')
     price = ('Price')
     supplierid = ('Supplier ID')
     suppliername = ('Supplier Name')
     delete = ('Delete')
+
+
 
 
 class SoldItemSearchForm(FlaskForm):
@@ -90,7 +93,7 @@ class SoldItemSearchForm(FlaskForm):
     search = StringField('')
 
 class EditSoldItemForm(FlaskForm):
-    solditem = HiddenField()
+    solditemid = HiddenField()
     customerfirstname = StringField('Customer Firstname',[InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Firstname"),
     Length(max=20, message="Too long Firstname")
@@ -101,6 +104,9 @@ class EditSoldItemForm(FlaskForm):
     ])
     email = StringField('Email',[InputRequired(),
     #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
+    ])
+    stockid = IntegerField('StockS ID', [InputRequired(),
+    NumberRange(min=1.00, max=4000, message= "Invalid Stock ID")
     ])
     price = FloatField('Price', [InputRequired(),
     NumberRange(min=1.00, message= "Invalid Price Range. Please enter a price of at least £1"),
@@ -155,7 +161,7 @@ class AddListingForm(FlaskForm):
     NumberRange(min=1.00, max=4000, message= "Invalid Supplier ID")
     ])
     price = FloatField('Price', [InputRequired(),
-    NumberRange(min=1.00, max=4000, message= "Invalid Price Range. Please enter a price of at least £1"),
+    NumberRange(min=1.00, message= "Invalid Price Range. Please enter a price of at least £1"),
     ])
     submit = SubmitField('Add Listing')
 

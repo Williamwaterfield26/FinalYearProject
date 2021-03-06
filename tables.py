@@ -45,9 +45,9 @@ class SoldItemResults(Table):
         customersurname= Col('Customer Surname')
         email = Col('Email')
         stockid = Col('Stock ID')
-        price = ('Price')
-        supplierid = ('Supplier ID')
-        suppliername = ('Supplier Name')
+        price = Col('Price')
+        supplierid = Col('Supplier ID')
+        suppliername = Col('Supplier Name')
         edit = LinkCol('Edit', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
         delete = LinkCol('Delete', 'deletesolditem', url_kwargs=dict(solditemid='solditemid'))
 
@@ -57,6 +57,6 @@ class UserResults(Table):
         username = Col('Username')
         password = Col('Password')
         email = Col('Email')
-        edit = LinkCol('Edit', 'editadmin', url_kwargs=dict(id = 'id'))
-        delete = LinkCol('Delete', 'deleteadmin', url_kwargs=dict(id='id'))
+        edit = LinkCol('Edit', 'edituser', url_kwargs=dict(id = 'id'))
+        delete = LinkCol('Delete', 'deleteuser', url_kwargs=dict(id='id'))
         

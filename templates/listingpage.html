@@ -1,17 +1,28 @@
-{% import "bootstrap/wtf.html" as wtf %}
 {% extends "base.html"%}
+{% import "bootstrap/wtf.html" as wtf %}
+
 
 {% block head %} 
 <title>Listing Page</title>
+
 {% endblock %}
 
 {% block body %}
-<h2>Listing Page</h2S>
-    <br>
-    </br>
+<h2>Listings Page</h2S>
+<br>
+</br>
 {{ wtf.quick_form(form) }}
-
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    <ul class="flash">
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+{% endwith %}
 <a href="./addlisting"><button>Add Listing</button></a>
+<a href="./alllisting"><button>Show All Listings</button></a>
 <div class="back">
     <a href="./loggedin"><button>Back</button></a>
 

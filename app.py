@@ -213,7 +213,7 @@ def addsupplier():
                 db.session.add(record)
                 db.session.commit()
                 message = f"The Supplier has been submitted"
-                return render_template('supplierpage.html', message=message)
+                return redirect(url_for('supplierpage'))
         else:
                 #show validation
                 for field, errors in form.errors.items():
@@ -318,6 +318,9 @@ class customer(db.Model):
     
 
 
+
+
+
 @app.route('/addcustomer', methods=['GET', 'POST'])
 @login_required
 def addcustomer():
@@ -332,7 +335,8 @@ def addcustomer():
                 db.session.add(record)
                 db.session.commit()
                 message = f"The Customer has been submitted"
-                return render_template('customerpage.html', message=message)
+                return redirect(url_for('customerpage'))
+
         else:
                 #show validation
                 for field, errors in form.errors.items():
@@ -391,6 +395,10 @@ class stock(db.Model):
         self.material = material
 
 
+                
+
+
+
 
 @app.route('/addstock', methods=['GET', 'POST'])
 @login_required
@@ -410,7 +418,7 @@ def addstock():
                 db.session.add(record)
                 db.session.commit()
                 message = f"The Stock has been submitted"
-                return render_template('stockpage.html', message=message)
+                return redirect(url_for('stockpage'))
         else:
                 #show validation
                 for field, errors in form.errors.items():
@@ -419,8 +427,6 @@ def addstock():
                                         getattr(form, field).label.text,
                                         error
                                 ), 'error')
-
-
                 return render_template('addstock.html', form=form)
 
 
@@ -484,6 +490,9 @@ def save_stock(stockid, form, new=False):
                 db.session.add(stockid)
         db.session.commit()
 
+
+
+
 #not working yet need to leave the house!
 @app.route('/stockresults')
 @login_required
@@ -494,11 +503,12 @@ def searchstockresults(search):
                 if search.data ['select'] == 'stockid':
                         qry = db.session.query(stock).filter(stock.stockid.contains(search_string))
                         results = qry.all()
-                if search.data['search']== '':
+                else:
                         qry = db.session.query(stock)
                         results = qry.all()
+
         if not results:
-                flash('No results found')
+                flash('No results found, please try again')
                 return redirect ('/stockpage')
         else:
                 table = StockResults(results)
@@ -552,7 +562,7 @@ def addsolditem():
                 db.session.add(record)
                 db.session.commit()
                 message = f"The Sold Item has been submitted"
-                return render_template('solditempage.html', message=message)
+                return redirect(url_for('solditempage'))
         else:
                 #show validation
                 for field, errors in form.errors.items():
@@ -567,19 +577,23 @@ def addsolditem():
 
 
 
+
+
+
+
 @app.route('/deletesolditem/<int:solditemid>', methods=['GET','POST'])
 @login_required
 def deletesolditem(solditemid):
         qry = db.session.query(solditem).filter(solditem.solditemid==solditemid)
-        solditemid = qry.first()
-        if solditemid:
+        customersurname = qry.first()
+        if customersurname:
                 form = DeleteSoldItemForm(formdata=request.form, obj=solditem)
                 if request.method == 'POST' and form.validate():
-                        db.session.delete(solditemid)
+                        db.session.delete(customersurname)
                         db.session.commit()
                         flash('Sold Item deleted successfully!')
                         return redirect('/solditempage')
-                return render_template('solditempage.html', form=form)
+                return render_template('deletesolditem.html', form=form)
         else:
                 return 'Error deleting the Sold Item'.format (solditemid=solditemid)
 
@@ -602,6 +616,9 @@ def editsolditem(solditemid):
 
 
 
+
+
+
         # suppliername = ('Supplier Name')
         # edit = LinkCol('Edit', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
         # delete = LinkCol('Delete', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
@@ -618,10 +635,19 @@ def allsolditem():
 
 
 
+def save_customer(customersurname, form, new=False):
+        customersurname.customerfirstname = form.customerfirstname.data
+        customersurname.customersurname = form.customersurname.data
+        customersurname.email = form.email.data
+
+        if new:
+                db.session.add(customersurname)
+        db.session.commit()
+
 
 def save_solditem(solditemid, form, new=False):
-        solditemid.solditemid = form.solditemid.data
         solditemid.customerfirstname = form.customerfirstname.data
+        solditemid.customersurname = form.customersurname.data
         solditemid.email = form.email.data
         solditemid.stockid = form.stockid.data
         solditemid.price = form.price.data
@@ -679,10 +705,13 @@ def searchsolditemresults(search):
 def searchuserresults(search):
         results = []
         search_string = search.data['search']
- 
-        if search.data['search']== '':
-                qry = db.session.query(user)
-                results = qry.all()
+        if search_string:
+                if search.data ['select'] == 'username':
+                        qry = db.session.query(User).filter(User.username.contains(search_string))
+                        results = qry.all()
+                else:
+                        qry = db.session.query(User)
+                        results = qry.all()
         if not results:
                 flash('No results found')
                 return redirect ('/userpage')
@@ -696,7 +725,7 @@ def searchuserresults(search):
 @login_required
 def alluser():
         results=[]
-        qry = db.session.query(user)
+        qry = db.session.query(User)
         results = qry.all()
         table=UserResults(results)
         table.border =True
@@ -713,10 +742,34 @@ def userpage():
         return render_template('userpage.html', form=search)
 
 
+@app.route('/adduser', methods=['GET', 'POST'])
+@login_required
+def adduser():
+        form = AddUserForm()
+        if form.validate_on_submit():
+                username = form.username.data
+                password = form.password.data
+                email = form.email.data
+
+        if form.validate_on_submit():
+                user = User.query.filter_by(username=username).first()
+                if not user:
+                        record = User(username=username, password=password, email=email)
+                        db.session.add(record)
+                        db.session.commit()
+                return redirect(url_for('userpage'))
+        else:
+                return render_template('adduser.html', form=form)
+
+
+
+
+
+
 @app.route('/edituser/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edituser(id):
-        qry = db.session.query(user).filter( user.id == id)
+        qry = db.session.query(User).filter( User.id == id)
         username = qry.first()
         if username:
                 form = EditUserForm(formdata=request.form, obj = username)
@@ -738,7 +791,7 @@ def save_user(username, form, new=False):
         username.email = form.email.data
 
         if new:
-                record = user(username= username, password= generate_password_hash(apassword, method = 'sha256'), email= email)
+                record = User(username= username, password= generate_password_hash(password, method = 'sha256'), email= email)
                 db.session.add(username)
         db.session.commit()
 
@@ -747,10 +800,10 @@ def save_user(username, form, new=False):
 @app.route('/deleteuser<int:id>', methods=['GET', 'POST'])
 @login_required
 def deleteuser(id):
-        qry = db.session.query(user).filter(user.id==id)
+        qry = db.session.query(User).filter(User.id==id)
         username = qry.first()
         if username:
-                form = DeleteUserForm(formdata=request.form, obj=user)
+                form = DeleteUserForm(formdata=request.form, obj=User)
                 if request.method == 'POST' and form.validate():
                         db.session.delete(id)
                         db.session.commit()
@@ -787,7 +840,7 @@ def addlisting():
                 db.session.add(record)
                 db.session.commit()
                 message = f"The Listing has been submitted"
-                return render_template('addlisting.html', message=message)
+                return redirect(url_for('listingpage'))
         else:
                 #show validation
                 for field, errors in form.errors.items():

@@ -7,6 +7,15 @@
 
 {% block body %}
 {{ wtf.quick_form(form) }}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    <ul class="flash">
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+{% endwith %}
 
 <a href="./addsolditem"><button>Add Sold Item</button></a>
 <a href="./allsolditems"><button>Show All Sold Items</button></a>
