@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="main.css">
+    <!-- <link rel="stylesheet" href="main.css"> -->
+    <link href="{{url_for('static', filename='css/main.css')}}" rel="stylesheet">
         {% block head %} {% endblock %}
 </head>
 <body>
@@ -25,6 +26,7 @@
             <a href="/supplierpage">Suppliers</a>
             <a href="/stockpage">Stock</a>
             <a href="/customerpage">Customers</a>
+            <a href="/currentuser">Current User</a>
             <a href="/logout">Log out</a>
         </nav>
       </header>
@@ -32,11 +34,12 @@
     <nav>
         <a href="/loggedin">Home</a>
         <a href="/userpage">Users</a>
-        <a href="/solditems">Sold Items</a>
+        <a href="/solditempage">Sold Items</a>
         <a href="/listingpage">Listings</a>
         <a href="/supplierpage">Suppliers</a>
         <a href="/stockpage">Stock</a>
         <a href="/customerpage">Customers</a>
+        <a href="/currentuser">Current User</a>
         <a href="/logout">Log out</a>
     </nav>
 

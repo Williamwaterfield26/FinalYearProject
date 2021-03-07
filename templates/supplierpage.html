@@ -6,6 +6,9 @@
 {% endblock %}
 
 {% block body %}
+<h2>Supplier Page</h2S>
+    <br>
+    </br>
 {{ wtf.quick_form(form) }}
 {% with messages = get_flashed_messages() %}
 {% if messages %}
@@ -16,8 +19,8 @@
     </ul>
 {% endif %}
 {% endwith %}
-
-<a href="./addsupplier"><button>Add Supplier</button></a>
+<a href="./allsupplier"><button>All Stock</button></a>
+<a href="./addsupplier"><button>Add Stock</button></a>
 <div class="back">
     <a href="./loggedin"><button>Back</button></a>
 
