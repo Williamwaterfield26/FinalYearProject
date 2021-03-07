@@ -117,7 +117,6 @@ def searchcustomerresults(search):
 
 
 
-
 #@app.route('/editcustomer',methods=['GET', 'POST'])
 @app.route('/editcustomer/<int:customerid>', methods=['GET', 'POST'])
 @login_required
@@ -168,6 +167,7 @@ def listingpage():
                 return searchlistingresults(search)
         return render_template('listingpage.html', form=search)
         
+
 
 
 @app.route('/stockpage', methods = ['GET', 'POST'])
@@ -492,7 +492,6 @@ def save_stock(stockid, form, new=False):
         if new:
                 db.session.add(stockid)
         db.session.commit()
-
 
 
 
@@ -902,9 +901,13 @@ def save_listing(supplierid, form, new=False):
 def searchlistingresults(search):
         results=[]
         search_string = search.data['search']
-        if search.data['search']== '':
-                qry = db.session.query(listing)
-                results = qry.all()
+        if search_string:
+                if search.data ['select'] == 'supplierid':
+                        qry = db.session.query(listing).filter(listing.supplierid.contains(search_string))
+                        results = qry.all()
+                else:
+                        qry = db.sesssion.query(listing)
+                        results = qry.all()
         if not results:
                 flash('No results found')
                 return redirect ('/listingpage')
@@ -912,7 +915,6 @@ def searchlistingresults(search):
                 table = ListingResults(results)
                 table.border = True
                 return render_template('results.html', table=table)
-
 
 
 @app.route('/alllisting')

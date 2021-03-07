@@ -10,7 +10,16 @@
     <br>
     </br>
 {{ wtf.quick_form(form) }}
-
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    <ul class="flash">
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+{% endwith %}
+<a href="./allstock"><button>All Stock</button></a>
 <a href="./addstock"><button>Add Stock</button></a>
 <div class="back">
     <a href="./loggedin"><button>Back</button></a>
