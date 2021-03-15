@@ -60,3 +60,5 @@ class UserResults(Table):
         edit = LinkCol('Edit', 'edituser', url_kwargs=dict(id = 'id'))
         delete = LinkCol('Delete', 'deleteuser', url_kwargs=dict(id='id'))
         
+class MoniesDueResults(Table):
+        price= Col('Price')

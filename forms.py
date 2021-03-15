@@ -42,7 +42,6 @@ class AddCustomerForm(FlaskForm):
     Length(max=20, message="Too long Surname")
     ])
     email = StringField('Email',[InputRequired(),
-    #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
     ])
     submit = SubmitField ('Add')
 
@@ -91,6 +90,12 @@ class SoldItemSearchForm(FlaskForm):
     choices = [('customersurname','customersurname')]
     select = SelectField ('Search for a customer', choices=choices)
     search = StringField('')
+
+class ComplieMoniesDueForm(FlaskForm):
+    choices = [('supplierid','supplierid')]
+    select = SelectField ('Search for the Money Owed to a supplier, type in a supplier ID', choices=choices)
+    search = StringField('')
+
 
 class EditSoldItemForm(FlaskForm):
     solditemid = HiddenField()
@@ -330,6 +335,5 @@ class AddUserForm(FlaskForm):
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Password"),
     ])
     email = StringField('Email',[InputRequired(),
-    #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
     ])
     submit = SubmitField('Register')

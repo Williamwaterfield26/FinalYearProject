@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, redirect, request, flash, Blueprint
-from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddUserForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteListingForm, StockSearchForm, EditStockForm, DeleteStockForm, AddSoldItemForm, DeleteSoldItemForm, EditSoldItemForm, SoldItemSearchForm, UserSearchForm, EditUserForm, DeleteUserForm, RegisterForm, LoginForm
+from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddUserForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteListingForm, StockSearchForm, EditStockForm, DeleteStockForm, AddSoldItemForm, DeleteSoldItemForm, EditSoldItemForm, SoldItemSearchForm, UserSearchForm, EditUserForm, DeleteUserForm, RegisterForm, LoginForm, ComplieMoniesDueForm
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -12,7 +12,7 @@ from flask_table import Table, Col, LinkCol
 from django import forms
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
-from tables import CustomerResults, SupplierResults, ListingResults, StockResults, SoldItemResults, UserResults
+from tables import CustomerResults, SupplierResults, ListingResults, StockResults, SoldItemResults, UserResults, MoniesDueResults
 from werkzeug.security import generate_password_hash, check_password_hash
 #from models import customer
 from flask_login import login_user, login_required, logout_user
@@ -30,6 +30,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db',MigrateCommand)
+
 
 
 
@@ -187,6 +188,13 @@ def solditempage():
                 return searchsolditemresults(search)
         return render_template('solditempage.html', form=search)
 
+@app.route('/compilemonies', methods = ['GET', 'POST'])
+@login_required
+def compilemonies():
+        search = ComplieMoniesDueForm(request.form)
+        if request.method == 'POST':
+                return searchcompilemonies(search)
+        return render_template('compilemonies.html', form=search)
 
 
         
@@ -684,22 +692,51 @@ def searchsolditemresults(search):
 
 
 
-# @app.route('/solditemresults')
-# def searchsolditemresults(search):
+
+@app.route('/moniesdueresults')
+@login_required
+def searchcompilemonies(search):
+        results = []
+        search_string = search.data['search']
+        if search_string:
+                if search.data ['select'] == 'supplierid':
+                        #qry = db.session.query(solditem).filter(solditem.supplierid.contains(search_string))
+                        qry = db.session.query(" SUM (price) FROM 'solditem' WHERE 'supplierid' == 'supplierid'")
+                        results = qry.all()
+
+                else:
+                        qry = db.session.query(solditem)
+                        results = qry.all()
+        if not results:
+                flash('No results found')
+                return redirect ('/compilemonies')
+        else:
+                for i in results:
+                        print(i[0])
+                return render_template('results.html', i=i)
+
+#attempt 1
+# @app.route('/moniesdueresults')
+# @login_required
+# def searchcompilemonies(search):
 #         results = []
 #         search_string = search.data['search']
+#         if search_string:
+#                 if search.data ['select'] == 'supplierid':
+#                         qry = db.session.query(solditem).filter(solditem.supplierid.contains(search_string))
+#                         qry = db.session.query(" SUM ('price') AS 'Total' FROM 'solditem' WHERE 'supplierid' == 'supplierid'")
+#                         results = qry.all()
 
-#         if search.data['search']== '':
-#                 qry = db.session.query(solditem)
-#                 results = qry.all()
+#                 else:
+#                         qry = db.session.query(solditem)
+#                         results = qry.all()
 #         if not results:
 #                 flash('No results found')
-#                 return redirect ('/solditempage')
+#                 return redirect ('/compilemonies')
 #         else:
-#                 table = SoldItemResults(results)
+#                 table = MoniesDueResults(results)
 #                 table.border = True
 #                 return render_template('results.html', table=table)
-
 
 
 @app.route('/userresults')
