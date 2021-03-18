@@ -93,7 +93,7 @@ class SoldItemSearchForm(FlaskForm):
 
 class ComplieMoniesDueForm(FlaskForm):
     choices = [('supplierid','supplierid')]
-    select = SelectField ('Search for the Money Owed to a supplier, type in a supplier ID', choices=choices)
+    select = SelectField ('Search for the Money Owed to a supplier, type in a supplier ID( YOU MUST TYPE IN A FULL ID)', choices=choices)
     search = StringField('')
 
 

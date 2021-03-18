@@ -695,62 +695,30 @@ def searchsolditemresults(search):
 
 
 
-#BOTTOM OF THE PAGE
-# @app.route('/moniesdueresults')
-# @login_required
-# def searchcompilemonies(search):
-#         supplierid = search
-#         results = []
-#         search_string = search.data['search']
-#         if search_string:
-#                 if search.data ['select'] == 'supplierid':
-#                         form = ComplieMoniesDueForm(formdata=request.form, obj = search)
-#                         #qry = db.session.query(solditem).filter(solditem.supplierid.contains(search_string))
-#                         qry = db.session.query("SUM (price) FROM 'solditem' WHERE supplierid == supplierid;")
-#                         #results = db.session.query("SUM( 'price')")
-#                         # qry = db.session.query(solditem).filter(solditem.supplierid.contains(search_string).aggregate(Sum('price')))
-#                         #qry = db.session.query("filter(solditem")
-#                         results = qry.all()
 
-#                 else:
-#                         qry = db.session.query(solditem)
-#                         results = qry.all()
-#         if not results:
-#                 flash('No results found')
-#                 return redirect ('/compilemonies')
-#         else:
-#                 for i in results:
-#                         print(i[0])
-#                 return render_template('results.html', i=i)
 
-#attempt 1
-# @app.route('/moniesdueresults')
-# @login_required
-# def searchcompilemonies(search):
-#         results = []
-#         search_string = search.data['search']
-#         if search_string:
-#                 if search.data ['select'] == 'supplierid':
-#                         qry = db.session.query(solditem).filter(solditem.supplierid.contains(search_string)) 
-#                         #qry = db.session.query(" SUM ('price') AS 'Total' FROM 'solditem' WHERE 'supplierid' == 'supplierid'")
-#                         # results = db.session.query("SUM( 'price')")
-#                         #qry= db.session.query(solditem).Sum('price')
-#                         #& (" SUM ('price') AS 'Total' FROM 'solditem' WHERE 'supplierid' == 'supplierid'")
-#                         results= qry.all()
-                        
+@app.route('/moniesdueresults')
+@login_required
+def searchcompilemonies(search):
+        supplierid = search
+        results = []
+        search_string = search.data['search']
+        if search_string:
+                if search.data ['select'] == 'supplierid':
+                        results = db.session.query(func.sum(solditem.price).filter(solditem.supplierid==(search_string)))
 
-                        
+                else:
+                        qry = db.session.query(solditem)
+                        results = qry.all()
+        if not results:
+                flash('No results found')
+                return redirect ('/compilemonies')
+        else:
+                for i in results:
+                        print(i[0])
+                Hello=('The money owed to the supplier is...')
+                return render_template('results.html', i=i, Hello=Hello)
 
-#                 else:
-#                         qry = db.session.query(solditem)
-#                         results = qry.all()
-#         if not results:
-#                 flash('No results found')
-#                 return redirect ('/compilemonies')
-#         else:
-#                 table = MoniesDueResults(results)
-#                 table.border = True
-#                 return render_template('results.html', table=table)
 
 
 @app.route('/userresults')
@@ -1071,75 +1039,6 @@ def logout():
 @login_required
 def currentuser():
         return render_template('currentuser.html')
-
-
-
-
-
-
-@app.route('/moniesdueresults')
-@login_required
-def searchcompilemonies(search):
-        supplierid = search
-        results = []
-        search_string = search.data['search']
-        if search_string:
-                if search.data ['select'] == 'supplierid':
-                        form = ComplieMoniesDueForm(formdata=request.form, obj = search)
-                        #qry = db.session.query(solditem).filter(solditem.supplierid.contains(search_string))
-                        #qry = db.session.query("SUM (price) FROM 'solditem' WHERE supplierid == supplierid")
-                        results = db.session.query(func.sum(solditem.price).filter(solditem.supplierid.contains(search_string)))
-                        #results = db.session.query("SUM( 'price')")
-                        # qry = db.session.query(solditem).filter(solditem.supplierid.contains(search_string).aggregate(Sum('price')))
-                        #qry = db.session.query("filter(solditem")
-                        # results = qry.all()
-
-                else:
-                        qry = db.session.query(solditem)
-                        results = qry.all()
-        if not results:
-                flash('No results found')
-                return redirect ('/compilemonies')
-        else:
-                for i in results:
-                        print(i[0])
-                return render_template('results.html', i=i)
-
-
-# @app.route('/moniesdueresults')
-# @login_required
-# def searchcompilemonies(search):
-#         userinput = search
-#         results = []
-#         search_string = search.data['search']
-#         if search_string:
-#                 if search.data ['select'] == 'supplierid':
-#                         qry = db.session.query(solditem).filter(solditem.supplierid.contains(search_string)) 
-#                         results= qry.all()
-#                         for i in results:
-#                                 qry = db.session.query(solditem).sum(solditem.price)
-#                                 results = qry.all()
-#                                 print(i)
-#                 # else:
-#                 #         qry = db.session.query(solditem)
-#                 #         results = qry.all()
-#         if not results:
-#                 flash('No results found')
-#                 return redirect ('/compilemonies')
-#         else:
-#                 # table = MoniesDueResults(results)
-#                 # table.border = True
-#                 # for search in results:
-#                 #         qry = db.session.query("SUM (price) FROM 'solditem' WHERE supplierid == supplierid")
-#                 #         results = qry.all()
-#                 #         for search in results:
-#                 #                 print(search[0])
-
-#                 return render_template('results.html', i=i)
-
-
-
-
 
 
 
