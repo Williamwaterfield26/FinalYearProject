@@ -28,7 +28,7 @@ class ListingResults(Table):
         delete = LinkCol('Delete', 'deletelisting', url_kwargs=dict(listingid='listingid'))
 
 class StockResults(Table):
-        stockid = Col('Stockid', show= False)
+        stockid = Col('Stockid', show= True)
         size= Col('Size')
         type= Col('Type')
         colour = Col('Colour')
@@ -55,7 +55,7 @@ class SoldItemResults(Table):
 class UserResults(Table):
         id = Col('User ID', show=False)
         username = Col('Username')
-        password = Col('Password')
+        password = Col('Password',show=False)
         email = Col('Email')
         edit = LinkCol('Edit', 'edituser', url_kwargs=dict(id = 'id'))
         delete = LinkCol('Delete', 'deleteuser', url_kwargs=dict(id='id'))

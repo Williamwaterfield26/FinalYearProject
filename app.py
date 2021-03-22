@@ -716,7 +716,7 @@ def searchcompilemonies(search):
         else:
                 for i in results:
                         print(i[0])
-                Hello=('The money owed to the supplier is...')
+                Hello=('The money owed to the supplier in £ is...')
                 return render_template('results.html', i=i, Hello=Hello)
 
 

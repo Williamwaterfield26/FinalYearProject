@@ -289,6 +289,7 @@ class DeleteStockForm(FlaskForm):
     supplierid =IntegerField('supplierid')
     material = StringField('material')
     delete = SubmitField('Delete')
+    cancel = SubmitField('Cancel')
 
 
 
