@@ -22,6 +22,8 @@ from sqlalchemy.sql import func
 
 
 
+
+
 app= Flask (__name__)
 app.config ['SECRET_KEY'] = 'bob'
 Bootstrap(app)
@@ -1041,9 +1043,7 @@ def currentuser():
         return render_template('currentuser.html')
 
 
-###this is the code for password reset
 
-###this is the end of password reset
 
 if __name__ == "__main__":
     app.run(debug=True)
