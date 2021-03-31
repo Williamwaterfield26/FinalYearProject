@@ -954,14 +954,7 @@ def alllisting():
 
 
 
-###LOGIN ATTEMPT
-# @app.route('/login/', methods=['GET', 'POST'])
-# def login():
-#         message =''
-#         return render_template('index.html', message='')
 
-#         if request.method == 'POST' and 'ausername' in request.form and 'apassword' in request.form:
-#                 ausername = request.form['ausername']
 
 
 
