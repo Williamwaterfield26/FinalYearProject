@@ -7,16 +7,20 @@
 
 {% block body %}
 <title> Showing Current User</title>
+<h2> Current User </h2>
+<br></br>
 <tbody>
     <tr>
-        <th>UserName</th>
+        <th>UserName:</th>
         <th>{{ current_user.username }}</th>
     </tr>
+    <br></br>
     <tr>
-        <th>Email</th>
+        <th>Email:</th>
         <th>{{ current_user.email }}</th>
     </tr>
 </tbody>
+<br></br>
 <div class="back">
     <a href="./loggedin"><button>Back</button></a>
 

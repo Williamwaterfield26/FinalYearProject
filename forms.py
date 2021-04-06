@@ -4,7 +4,7 @@ from flask import Flask, render_template, url_for, redirect
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, PasswordField, SubmitField, HiddenField, IntegerField, FloatField, SelectField, Form
-from wtforms.validators import DataRequired, InputRequired, Length, Regexp, NumberRange, Email
+from wtforms.validators import DataRequired, InputRequired, Length, Regexp, NumberRange, Email, EqualTo
 
 #from app import db
 
@@ -338,3 +338,23 @@ class AddUserForm(FlaskForm):
     email = StringField('Email',[InputRequired(),
     ])
     submit = SubmitField('Register')
+
+
+class ResetPasswordRequestForm(FlaskForm):
+    email = StringField('Email',validators = [DataRequired(), Email()])
+    submit = SubmitField ('Request Password Reset')
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('New Password', [InputRequired(), EqualTo('confirm', message='Passwords must match')])
+    confirm  = PasswordField('Repeat Password')
+
+
+    # password = PasswordField('Password', validators=[DataRequired()])
+    # password2 = PasswordField(
+    #     'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    # submit = SubmitField('Request Password Reset')
+
+
+        # password = PasswordField('Password', validators=[DataRequired(),EqualTo('password2',
+        #     message="Passwords must match")])

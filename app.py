@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, redirect, request, flash, Blueprint
-from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddUserForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteListingForm, StockSearchForm, EditStockForm, DeleteStockForm, AddSoldItemForm, DeleteSoldItemForm, EditSoldItemForm, SoldItemSearchForm, UserSearchForm, EditUserForm, DeleteUserForm, RegisterForm, LoginForm, ComplieMoniesDueForm
+from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddUserForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteListingForm, StockSearchForm, EditStockForm, DeleteStockForm, AddSoldItemForm, DeleteSoldItemForm, EditSoldItemForm, SoldItemSearchForm, UserSearchForm, EditUserForm, DeleteUserForm, RegisterForm, LoginForm, ComplieMoniesDueForm, ResetPasswordRequestForm
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -7,7 +7,7 @@ from flask_login import UserMixin, LoginManager
 from datetime import date
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import StringField, PasswordField, SubmitField, HiddenField, IntegerField, FloatField
-from wtforms.validators import DataRequired, InputRequired, Length, Regexp, NumberRange
+from wtforms.validators import DataRequired, InputRequired, Length, Regexp, NumberRange,EqualTo
 from flask_table import Table, Col, LinkCol
 from django import forms
 from flask_migrate import Migrate, MigrateCommand
@@ -19,6 +19,13 @@ from flask_login import login_user, login_required, logout_user
 import pandas as pd
 from django.db.models import Sum
 from sqlalchemy.sql import func
+from time import time
+import jwt
+
+from email1 import send_password_reset_email, send_email
+
+
+
 
 
 
@@ -87,7 +94,6 @@ def customerpage():
 
 
 
-
 @app.route('/allcustomer')
 @login_required
 def allcustomer():
@@ -123,10 +129,11 @@ def searchcustomerresults(search):
 
 
 
-#@app.route('/editcustomer',methods=['GET', 'POST'])
+
+
+
 @app.route('/editcustomer/<int:customerid>', methods=['GET', 'POST'])
 @login_required
-#@app.route('/editcustomer/<customerid>',methods=['GET', 'POST'])
 def editcustomer(customerid):
         qry = db.session.query(customer).filter( customer.customerid == customerid)
         customersurname = qry.first()
@@ -179,6 +186,9 @@ def listingpage():
 @app.route('/stockpage', methods = ['GET', 'POST'])
 @login_required
 def stockpage():
+        # if User.is_not_authenticated:
+        #         return render_template('index.html')
+        # else:
         search = StockSearchForm(request.form)
         if request.method == 'POST':
                 return searchstockresults(search)
@@ -241,7 +251,7 @@ def addsupplier():
 
 
 
-@app.route('/deletesupplier/<int:supplierid>', methods=['GET', 'POST'])
+@app.route('/deletesupplier<int:supplierid>', methods=['GET', 'POST'])
 @login_required
 def deletesupplier(supplierid):
         qry = db.session.query(supplier).filter(supplier.supplierid==supplierid)
@@ -365,8 +375,10 @@ def addcustomer():
 
 
 
+
+
 # Delete customer from database which matches the ID
-@app.route('/deletecustomer/<int:customerid>', methods=['GET', 'POST'])
+@app.route('/deletecustomer<int:customerid>', methods=['GET', 'POST'])
 @login_required
 def deletecustomer(customerid):
         qry = db.session.query(customer).filter( customer.customerid == customerid)
@@ -446,7 +458,7 @@ def addstock():
 
 
 
-@app.route('/deletestock/<int:stockid>', methods=['GET','POST'])
+@app.route('/deletestock<int:stockid>', methods=['GET','POST'])
 @login_required
 def deletestock(stockid):
         qry = db.session.query(stock).filter(stock.stockid==stockid)
@@ -596,7 +608,7 @@ def addsolditem():
 
 
 
-@app.route('/deletesolditem/<int:solditemid>', methods=['GET','POST'])
+@app.route('/deletesolditem<int:solditemid>', methods=['GET','POST'])
 @login_required
 def deletesolditem(solditemid):
         qry = db.session.query(solditem).filter(solditem.solditemid==solditemid)
@@ -789,7 +801,7 @@ def adduser():
 
 
 
-@app.route('/edituser/<int:id>', methods=['GET', 'POST'])
+@app.route('/edituser<int:id>', methods=['GET', 'POST'])
 @login_required
 def edituser(id):
         qry = db.session.query(User).filter( User.id == id)
@@ -1019,6 +1031,19 @@ class User(db.Model, UserMixin):
 
     def verify_password(self,pwd):
             return check_password_hash(self.password,pwd)
+    def get_reset_password_token(self, expires_in=600):
+            return jwt.encode(
+                    {'reset_password': self.id, 'exp': time() + expires_in},
+                    app.config['SECRET_KEY'], algorithm='HS256')
+
+    @staticmethod
+    def verify_reset_password_token(token):
+            try:
+                id = jwt.decode(token, app.config['SECRET_KEY'],
+                                algorithms=['HS256'])['reset_password']
+            except:
+                return
+            return User.query.get(id)
 
 @app.route("/")
 #@login_required
@@ -1034,6 +1059,68 @@ def logout():
 @login_required
 def currentuser():
         return render_template('currentuser.html')
+
+
+
+
+
+
+
+
+###reset password
+@app.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+     #if User.is_authenticated:
+     #    return redirect(url_for('index'))
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            send_password_reset_email(user)
+        flash('Check your email for the instructions to reset your password')
+        return redirect(url_for('login'))
+    return render_template('reset_password_request.html',title='Reset Password', form=form)
+
+
+
+@app.route('/reset_password/<token>', methods=['GET','POST'])
+def reset_password(token):
+    if User.is_authenticated:
+        return redirect(url_for('loggedin'))
+    user = User.verify_reset_password_token(token)
+    if not user:
+        return redirect(url_for('index'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash('Your password has been reset.')
+        return redirect(url_for('login'))
+    return render_template('reset_password.html', form=form)
+
+
+
+###Errors
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'),404
+
+
+@app.errorhandler(500)
+def not_found_error(error):
+    db.session.rollback()
+    return render_template('500.html'),500
+
+# @app.route()
+# def unautharisederror():
+#         if response.status_code == 401:
+#                 return redirect(url_for('401.html'))
+
+# @app.errorhandler(401)
+# def not_found_error(error):
+#     return render_template('401.html')
+
 
 
 
