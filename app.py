@@ -31,6 +31,7 @@ from email1 import send_password_reset_email, send_email
 
 
 
+
 app= Flask (__name__)
 app.config ['SECRET_KEY'] = 'bob'
 Bootstrap(app)
@@ -1104,22 +1105,19 @@ def reset_password(token):
 
 @app.errorhandler(404)
 def not_found_error(error):
-    return render_template('404.html'),404
+    return render_template('404.html')
 
 
 @app.errorhandler(500)
 def not_found_error(error):
     db.session.rollback()
-    return render_template('500.html'),500
+    return render_template('500.html')
 
-# @app.route()
-# def unautharisederror():
-#         if response.status_code == 401:
-#                 return redirect(url_for('401.html'))
 
-# @app.errorhandler(401)
-# def not_found_error(error):
-#     return render_template('401.html')
+
+@app.errorhandler(401)
+def not_found_error(error):
+    return render_template('401.html')
 
 
 
