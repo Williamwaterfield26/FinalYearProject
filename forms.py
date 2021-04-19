@@ -1,11 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, HiddenField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, HiddenField, BooleanField, validators
 from flask import Flask, render_template, url_for, redirect
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, PasswordField, SubmitField, HiddenField, IntegerField, FloatField, SelectField, Form
 from wtforms.validators import DataRequired, InputRequired, Length, Regexp, NumberRange, Email, EqualTo
-
+from wtforms.fields.html5 import EmailField
 #from app import db
 
 class SignUpForm(FlaskForm):
@@ -358,3 +358,19 @@ class ResetPasswordForm(FlaskForm):
 
         # password = PasswordField('Password', validators=[DataRequired(),EqualTo('password2',
         #     message="Passwords must match")])
+
+
+# ##reset monday
+# class ForgotForm(FlaskForm):
+#     email = StringField('Email',validators = [DataRequired(), Email()])
+#     # email = StringField('Email',
+#     # validators.DataRequired(), validators.Email()]
+#     # )
+
+class PasswordResetForm(FlaskForm):
+    current_password = PasswordField('Current Password', validators =[DataRequired()]
+    )
+
+class ForgotForm(FlaskForm):
+    email = EmailField('Email', [validators.DataRequired(), validators.Email()]
+    )

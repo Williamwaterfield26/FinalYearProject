@@ -1,4 +1,5 @@
 {% import "bootstrap/wtf.html" as wtf %}
+{% from '_formhelpers.html' import render_field %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -24,6 +25,11 @@
         <a href="reset_password_request">Click to Reset It</a>
     </p>
 
+    <!-- reset password 3 lines-->
+    {{render_field(form.username, class='form-control')}}
+    {{render_field(form.password, **{"class":'form-control',"aria-described-by":"passwordHelpBlock"})}}
+    
+    <span id ="passwordHelpBlock" class="help-block"><a href="{{url_for('.forgot') }}">Forgot Password2</a></span>
 
     <br>
     <br>

@@ -22,7 +22,7 @@ from sqlalchemy.sql import func
 from time import time
 import jwt
 
-from email1 import send_password_reset_email, send_email
+
 
 
 
@@ -78,23 +78,21 @@ def supplierpage():
         return render_template('supplierpage.html',form=search)
         
 
-
+#customer page
 @app.route('/customerpage', methods = ['GET', 'POST'])
 @login_required
 def customerpage():
-        #form = CustomerSearchForm()
         search = CustomerSearchForm(request.form)
         if request.method == 'POST':
                 return searchcustomerresults(search)
 
-        #return render_template('customerpage.html', search=search, form=form)
         return render_template('customerpage.html', form=search)
 
 
 
 
 
-
+#get all customers from the customers table and present them in results
 @app.route('/allcustomer')
 @login_required
 def allcustomer():
@@ -105,7 +103,9 @@ def allcustomer():
         table.border =True
         return render_template('allcustomer.html', table=table)
 
-#works for customersurname
+
+
+#get all customers from the customers table and present them in results that are equal to the user input
 @app.route('/customerresults')
 @login_required
 def searchcustomerresults(search):
@@ -124,7 +124,7 @@ def searchcustomerresults(search):
         else:
                 table = CustomerResults(results)
                 table.border = True
-                return render_template('results.html', table=table)
+                return render_template('results2.html', table=table)
 
 
 
@@ -132,7 +132,7 @@ def searchcustomerresults(search):
 
 
 
-
+#edit a customer
 @app.route('/editcustomer/<int:customerid>', methods=['GET', 'POST'])
 @login_required
 def editcustomer(customerid):
@@ -148,9 +148,9 @@ def editcustomer(customerid):
                 return render_template('customerpage.html', form=form)
         else:
                 return 'Error loading the customer'.format(customerid=customerid)
-#</int:customerid>
 
 
+#to save the edit of a customer
 def save_customer(customersurname, form, new=False):
         customersurname.customerfirstname = form.customerfirstname.data
         customersurname.customersurname = form.customersurname.data
@@ -172,7 +172,7 @@ def results():
 
 
 
-
+#listing page
 @app.route('/listingpage',methods = ['GET', 'POST'])
 @login_required
 def listingpage():
@@ -183,19 +183,16 @@ def listingpage():
         
 
 
-
+#stock page
 @app.route('/stockpage', methods = ['GET', 'POST'])
 @login_required
 def stockpage():
-        # if User.is_not_authenticated:
-        #         return render_template('index.html')
-        # else:
         search = StockSearchForm(request.form)
         if request.method == 'POST':
                 return searchstockresults(search)
         return render_template('stockpage.html', form=search)
 
-
+#solditem page
 @app.route('/solditempage', methods = ['GET', 'POST'])
 @login_required
 def solditempage():
@@ -204,6 +201,7 @@ def solditempage():
                 return searchsolditemresults(search)
         return render_template('solditempage.html', form=search)
 
+#compile monies page, where the user can type in the supplier ID to find out how much is owed to them
 @app.route('/compilemonies', methods = ['GET', 'POST'])
 @login_required
 def compilemonies():
@@ -214,7 +212,7 @@ def compilemonies():
 
 
         
-        
+        #class for supplier
 class supplier(db.Model):
         __tablename__ = 'supplier'
         supplierid = db.Column(db.Integer, primary_key = True)
@@ -225,7 +223,7 @@ class supplier(db.Model):
                 self.suppliername = suppliername
     
 
-
+#add supplier. user can add a supplier and it is saved in the database
 @app.route('/addsupplier', methods=['GET', 'POST'])
 @login_required
 def addsupplier():
@@ -251,7 +249,7 @@ def addsupplier():
 
 
 
-
+#supplier can be deleted from the database
 @app.route('/deletesupplier<int:supplierid>', methods=['GET', 'POST'])
 @login_required
 def deletesupplier(supplierid):
@@ -268,7 +266,7 @@ def deletesupplier(supplierid):
         else:
                 return 'Error deleting supplier'.format(supplierid=supplierid)
 
-
+#to show all suppliers to the user
 @app.route('/allsupplier')
 @login_required
 def allsupplier():
@@ -281,7 +279,7 @@ def allsupplier():
 
 
 
-
+#to edit a supplier
 @app.route('/editsupplier/<int:supplierid>',methods= ['GET','POST'])
 @login_required
 def editsupplier(supplierid):
@@ -298,6 +296,7 @@ def editsupplier(supplierid):
         else:
                 return 'Error loading supplier'.format(supplierid=supplierid)
 
+#save the edit of supplier
 def save_supplier(suppliername, form, new=False):
         suppliername.suppliername = form.suppliername.data
 
@@ -306,7 +305,7 @@ def save_supplier(suppliername, form, new=False):
         db.session.commit()
 
 
-#works for suppliername
+#get all suppliers from the supplier table and present them in results that are equal to the user input
 @app.route('/supplierresults')
 @login_required
 def searchsupplierresults(search):
@@ -328,7 +327,7 @@ def searchsupplierresults(search):
                 return render_template('results.html', table=table)
 
 
-
+#customer class
 class customer(db.Model):
     __tablename__ = 'customers'
     customerid = db.Column(db.Integer, primary_key = True)
@@ -345,7 +344,7 @@ class customer(db.Model):
 
 
 
-
+#to add a customer
 @app.route('/addcustomer', methods=['GET', 'POST'])
 @login_required
 def addcustomer():
@@ -398,7 +397,7 @@ def deletecustomer(customerid):
 
 
 
-
+#stock class
 class stock(db.Model):
     __tablename__ = 'stock'
     stockid = db.Column(db.Integer, primary_key = True)
@@ -426,7 +425,7 @@ class stock(db.Model):
 
 
 
-
+#add stock to the database
 @app.route('/addstock', methods=['GET', 'POST'])
 @login_required
 def addstock():
@@ -458,7 +457,7 @@ def addstock():
 
 
 
-
+#delete stock and update the database
 @app.route('/deletestock<int:stockid>', methods=['GET','POST'])
 @login_required
 def deletestock(stockid):
@@ -475,7 +474,7 @@ def deletestock(stockid):
         else:
                 return 'Error deleting stock'.format (stockid=stockid)
 
-
+#edit the stock
 @app.route('/editstock/<int:stockid>', methods=['GET', 'POST'])
 @login_required
 def editstock(stockid):
@@ -494,7 +493,7 @@ def editstock(stockid):
 
 
 
-
+#get all stock from the stock table and present them in results 
 @app.route('/allstock')
 @login_required
 def allstock():
@@ -505,7 +504,7 @@ def allstock():
         table.border =True
         return render_template('allstock.html', table=table)
 
-
+#save stock
 def save_stock(stockid, form, new=False):
         #stockid.stockid = form.stockid.data
         stockid.size = form.size.data
@@ -1065,14 +1064,14 @@ def currentuser():
 
 
 
-
+from email1 import send_password_reset_email, send_email
 
 
 ###reset password
 @app.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
-     #if User.is_authenticated:
-     #    return redirect(url_for('index'))
+#     if User.is_authenticated:
+#         return redirect(url_for('index'))
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
@@ -1098,6 +1097,35 @@ def reset_password(token):
         flash('Your password has been reset.')
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
+
+
+
+
+##reset from monday
+from forms import ForgotForm, PasswordResetForm
+import uuid
+
+@app.route('/forgot', methods=('GET','POST'))
+def forgot():
+    error = None
+    message = None
+    form = ForgotForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data.lower().first())
+        if user:
+            code = str(uuid.uuid4())
+            user.change_configuration={
+                "password_reset_code":code
+            }
+            db.session.add(user)
+            db.session.commit()
+            #email user
+            body_html = render_template('password_reset.html',user=user)
+            body_text = render_template('password_reset.txt', user=user)
+            email(user.email,"password reset request", body_html, body_text)
+
+        message = "you will recive a password reset email if we find the email"
+    return render_template('forgot.html',form=form, error=error)
 
 
 

@@ -1,5 +1,6 @@
 from flask_mail import Mail
-from app import errors
+from flask import Flask
+
 
 
 app = Flask(__name__)
