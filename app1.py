@@ -636,11 +636,7 @@ def editsolditem(solditemid):
 
 
 
-
-        # suppliername = ('Supplier Name')
-        # edit = LinkCol('Edit', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
-        # delete = LinkCol('Delete', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
-
+#to retreive all solditems
 @app.route('/allsolditem')
 @login_required
 def allsolditem():
@@ -653,16 +649,8 @@ def allsolditem():
 
 
 
-def save_customer(customersurname, form, new=False):
-        customersurname.customerfirstname = form.customerfirstname.data
-        customersurname.customersurname = form.customersurname.data
-        customersurname.email = form.email.data
 
-        if new:
-                db.session.add(customersurname)
-        db.session.commit()
-
-
+#saving the solditem
 def save_solditem(solditemid, form, new=False):
         solditemid.customerfirstname = form.customerfirstname.data
         solditemid.customersurname = form.customersurname.data
@@ -676,7 +664,7 @@ def save_solditem(solditemid, form, new=False):
         db.session.commit()
 
 
-
+#to search the sold items
 @app.route('/solditemresults')
 @login_required
 def searchsolditemresults(search):
@@ -686,10 +674,6 @@ def searchsolditemresults(search):
                 if search.data ['select'] == 'customersurname':
                         qry = db.session.query(solditem).filter(solditem.customersurname.contains(search_string))
                         results = qry.all()
-                        # table = SoldItemResults(results)
-                        # table.border = True
-                        # return render_template('results.html', table=table)
-
         if not results:
                 flash('No results found')
                 return redirect ('/solditempage')
@@ -701,11 +685,10 @@ def searchsolditemresults(search):
 
 
 
-
+#search for a supplier and total the money owed to the supplier
 @app.route('/moniesdueresults')
 @login_required
 def searchcompilemonies(search):
-        supplierid = search
         results = []
         search_string = search.data['search']
         if search_string:
@@ -725,7 +708,7 @@ def searchcompilemonies(search):
                 return render_template('results.html', i=i, Hello=Hello)
 
 
-
+#to retrieve all the users from the search
 @app.route('/userresults')
 @login_required
 def searchuserresults(search):
@@ -746,7 +729,7 @@ def searchuserresults(search):
                 table.border = True
                 return render_template('results.html', table=table)
 
-
+#to retrieve all users
 @app.route('/alluser')
 @login_required
 def alluser():
@@ -757,7 +740,7 @@ def alluser():
         table.border =True
         return render_template('alluser.html', table=table)
 
-
+#userpage
 @app.route('/userpage', methods = ['GET', 'POST'])
 @login_required
 def userpage():
@@ -767,7 +750,7 @@ def userpage():
 
         return render_template('userpage.html', form=search)
 
-
+#to add a user to the system
 @app.route('/adduser', methods=['GET', 'POST'])
 @login_required
 def adduser():
@@ -791,7 +774,7 @@ def adduser():
 
 
 
-
+#to edit a user
 @app.route('/edituser<int:id>', methods=['GET', 'POST'])
 @login_required
 def edituser(id):
@@ -810,7 +793,7 @@ def edituser(id):
 
 
 
-
+#to save the user
 def save_user(username, form, new=False):
         username.username = form.username.data
         username.email = form.email.data
@@ -821,7 +804,7 @@ def save_user(username, form, new=False):
         db.session.commit()
 
 
-
+#to delete user 
 @app.route('/deleteuser<int:id>', methods=['GET', 'POST'])
 @login_required
 def deleteuser(id):
