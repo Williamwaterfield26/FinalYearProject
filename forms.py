@@ -8,18 +8,6 @@ from wtforms.validators import DataRequired, InputRequired, Length, Regexp, Numb
 from wtforms.fields.html5 import EmailField
 #from app import db
 
-class SignUpForm(FlaskForm):
-    ausername = StringField('Username')
-    apassword = PasswordField('Password')
-    email = EmailField('Email')
-    submit = SubmitField('Sign Up')
-    
-
-class SignInForm(FlaskForm):
-    ausername = StringField('Username')
-    apassword = PasswordField('Password')
-    submit = SubmitField('Sign In')
-
 
 
 class AddCustomerForm(FlaskForm):
@@ -44,7 +32,6 @@ class AddSoldItemForm(FlaskForm):
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Surname"),
     ])
     email = EmailField('Email',[InputRequired(),
-    #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
     ])
     stockid = IntegerField('Stock ID', [InputRequired(),
     NumberRange(min=1.00, max=4000, message= "Invalid Stock ID")
@@ -92,7 +79,6 @@ class EditSoldItemForm(FlaskForm):
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Surname"),
     ])
     email = EmailField('Email',[InputRequired(),
-    #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
     ])
     stockid = IntegerField('StockS ID', [InputRequired(),
     NumberRange(min=1.00, max=4000, message= "Invalid Stock ID")
@@ -155,10 +141,6 @@ class AddListingForm(FlaskForm):
 
 
 
-#class CustomerSearchForm(Form):
-    # choices = [('customerid', 'customerid'), ('customerfirstname'), ('customersurname', 'customersurname'), ('email','email')]
-    # select = SelectField ('Search for a customer', choices=choices)
-    # search = StringField('')
 class CustomerSearchForm(FlaskForm):
     choices = [('customersurname','customersurname')]
     select = SelectField ('Search for a customer', choices=choices)
@@ -173,14 +155,10 @@ class EditCustomerForm(FlaskForm):
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Surname"),
     ])
     email = EmailField('Email',[InputRequired(),
-    #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
     ])
     update = SubmitField('Update')
     cancel = SubmitField('Cancel')
 
-    # customerfirstname =StringField('Customer Firstname')
-    # customersurname =StringField('Customer Surname')
-    # email =StringField('Email')
 
 
 class DeleteCustomerForm(FlaskForm):
@@ -281,7 +259,6 @@ class EditUserForm(FlaskForm):
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Username"),
     ])
     email = StringField('Email',[InputRequired(),
-    #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
     ])
     update = SubmitField('Update')
 

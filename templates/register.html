@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <link href="{{url_for('static', filename='css/main4.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/main3.css')}}" rel="stylesheet">
 </head>
 <body>
  
@@ -14,12 +14,18 @@
         
         <!-- add nav bar and log in sign up-->
     </div>
-    <h2>If you had just tried to register and have been redirected back here your email is already taken!</h2>
-    <h2>You may already have an account</h2>
-    <br>
 
+    
     {{wtf.quick_form(form)}}
-
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class="flash">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
 
     <div class="back">
         <a href="./"><button>Back</button></a>

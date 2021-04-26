@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, redirect, request, flash, Blueprint
-from forms import SignUpForm, SignInForm, AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddUserForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteListingForm, StockSearchForm, EditStockForm, DeleteStockForm, AddSoldItemForm, DeleteSoldItemForm, EditSoldItemForm, SoldItemSearchForm, UserSearchForm, EditUserForm, DeleteUserForm, RegisterForm, LoginForm, ComplieMoniesDueForm, ResetPasswordRequestForm
+from forms import AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm, AddUserForm, CustomerSearchForm, EditCustomerForm, DeleteCustomerForm, SupplierSearchForm, EditSupplierForm, DeleteSupplierForm, ListingSearchForm, EditListingForm, DeleteListingForm, StockSearchForm, EditStockForm, DeleteStockForm, AddSoldItemForm, DeleteSoldItemForm, EditSoldItemForm, SoldItemSearchForm, UserSearchForm, EditUserForm, DeleteUserForm, RegisterForm, LoginForm, ComplieMoniesDueForm, ResetPasswordRequestForm
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -51,27 +51,15 @@ manager.add_command('db',MigrateCommand)
 
 
 
-@app.route('/preregistereduser')
-def preregistereduser():
-        return render_template('preregistereduser.html')
 
 
-@app.route('/invaliddetails')
-def invaliddetails():
-        return render_template('invaliddetails.html')
-
-@app.route('/registered')
-def registered():
-        return render_template('registered.html')
-
-
-
+#logged in home page
 @app.route('/loggedin')
 @login_required
 def loggedin():
         return render_template('loggedin.html')
 
-
+#supplierpage
 @app.route('/supplierpage', methods = ['GET', 'POST'])
 @login_required
 def supplierpage():
@@ -127,7 +115,7 @@ def searchcustomerresults(search):
         else:
                 table = CustomerResults(results)
                 table.border = True
-                return render_template('results2.html', table=table)
+                return render_template('results.html', table=table)
 
 
 
@@ -237,8 +225,8 @@ def addsupplier():
                 record = supplier(suppliername)
                 db.session.add(record)
                 db.session.commit()
-                message = f"The Supplier has been submitted"
-                return redirect(url_for('supplierpage'))
+                flash('The Supplier has been submitted')
+                return redirect('/supplierpage')
         else:
                 #show validation
                 for field, errors in form.errors.items():
@@ -591,7 +579,7 @@ def addsolditem():
                 record = solditem(customerfirstname, customersurname, email, stockid, price, supplierid, suppliername)
                 db.session.add(record)
                 db.session.commit()
-                message = f"The Sold Item has been submitted"
+                flash("The Sold Item has been submitted")
                 return redirect(url_for('solditempage'))
         else:
                 #show validation
@@ -876,7 +864,7 @@ def addlisting():
                 record = listing(supplierid, price)
                 db.session.add(record)
                 db.session.commit()
-                message = f"The Listing has been submitted"
+                flash("The Listing has been submitted")
                 return redirect(url_for('listingpage'))
         else:
                 #show validation
@@ -985,6 +973,7 @@ def register():
                 user = User.query.filter_by(email=email).first()
                 
                 if user:
+                        flash("email already registered")
                         return redirect(url_for('register'))
                 
                 if not user:
@@ -993,7 +982,6 @@ def register():
                         db.session.commit()
                 return redirect(url_for('login'))
         else:
-                message=("email already registered")
                 return render_template('register.html', form=form)
 
 
@@ -1011,7 +999,7 @@ def login():
                         flash("User Logged In!")
                         return redirect(url_for('loggedin'))
                 else:
-                        flash("Invalid Login")
+                        flash("Invalid Login, please try again or register")
         else:
                 print(form.errors)
         
