@@ -118,8 +118,8 @@ body {
 
 }
 .boxed {
-  height: 60px;
-  width: 60px;
+  height: 90px;
+  width: 95px;
   border: 10px solid black;
   text-align: right;
 }

@@ -21,7 +21,9 @@ from django.db.models import Sum
 from sqlalchemy.sql import func
 from time import time
 import jwt
-
+from flask import Flask
+from flask_mail import Mail, Message
+from app.__init__ import app
 
 
 
@@ -43,6 +45,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db',MigrateCommand)
+
 
 
 
@@ -132,8 +135,9 @@ def searchcustomerresults(search):
 
 
 
+
 #edit a customer
-@app.route('/editcustomer/<int:customerid>', methods=['GET', 'POST'])
+@app.route('/editcustomer<int:customerid>', methods=['GET', 'POST'])
 @login_required
 def editcustomer(customerid):
         qry = db.session.query(customer).filter( customer.customerid == customerid)
@@ -142,7 +146,6 @@ def editcustomer(customerid):
                 form = EditCustomerForm(formdata=request.form, obj = customersurname)
                 if request.method == 'POST' and form.validate():
                         save_customer(customersurname,form)
-
                         flash ('Customer updated!')
                         return redirect ('/customerpage')
                 return render_template('customerpage.html', form=form)
@@ -280,7 +283,7 @@ def allsupplier():
 
 
 #to edit a supplier
-@app.route('/editsupplier/<int:supplierid>',methods= ['GET','POST'])
+@app.route('/editsupplier<int:supplierid>',methods= ['GET','POST'])
 @login_required
 def editsupplier(supplierid):
         qry = db.session.query(supplier).filter(supplier.supplierid== supplierid)
@@ -475,7 +478,7 @@ def deletestock(stockid):
                 return 'Error deleting stock'.format (stockid=stockid)
 
 #edit the stock
-@app.route('/editstock/<int:stockid>', methods=['GET', 'POST'])
+@app.route('/editstock<int:stockid>', methods=['GET', 'POST'])
 @login_required
 def editstock(stockid):
         qry = db.session.query(stock).filter( stock.stockid == stockid)
@@ -625,7 +628,7 @@ def deletesolditem(solditemid):
                 return 'Error deleting the Sold Item'.format (solditemid=solditemid)
 
 
-@app.route('/editsolditem/<int:solditemid>', methods=['GET', 'POST'])
+@app.route('/editsolditem<int:solditemid>', methods=['GET', 'POST'])
 @login_required
 def editsolditem(solditemid):
         qry = db.session.query(solditem).filter( solditem.solditemid == solditemid)
@@ -822,11 +825,10 @@ def edituser(id):
 
 def save_user(username, form, new=False):
         username.username = form.username.data
-        username.password = form.password.data
         username.email = form.email.data
 
         if new:
-                record = User(username= username, password= generate_password_hash(password, method = 'sha256'), email= email)
+                record = User(username= username, email= email)
                 db.session.add(username)
         db.session.commit()
 
@@ -980,13 +982,18 @@ def register():
         email = form.email.data
 
         if form.validate_on_submit():
-                user = User.query.filter_by(username=username).first()
+                user = User.query.filter_by(email=email).first()
+                
+                if user:
+                        return redirect(url_for('register'))
+                
                 if not user:
                         record = User(username=username, password=password, email=email)
                         db.session.add(record)
                         db.session.commit()
                 return redirect(url_for('login'))
         else:
+                message=("email already registered")
                 return render_template('register.html', form=form)
 
 
@@ -1028,7 +1035,7 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
             return f'<User {self.username}>'
-
+        #expires in 10 mins
     def verify_password(self,pwd):
             return check_password_hash(self.password,pwd)
     def get_reset_password_token(self, expires_in=600):
@@ -1062,24 +1069,26 @@ def currentuser():
 
 
 
-
-
 from email1 import send_password_reset_email, send_email
 
 
 ###reset password
 @app.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
-#     if User.is_authenticated:
-#         return redirect(url_for('index'))
-    form = ResetPasswordRequestForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user:
-            send_password_reset_email(user)
-        flash('Check your email for the instructions to reset your password')
-        return redirect(url_for('login'))
-    return render_template('reset_password_request.html',title='Reset Password', form=form)
+        # if User.is_authenticated:
+        #         return redirect(url_for('index'))
+        
+        form = ResetPasswordRequestForm()
+        if form.validate_on_submit():
+                user = User.query.filter_by(email=form.email.data).first()
+                if user:
+                        send_password_reset_email(user)
+                        flash('Check your email for the instructions to reset your password')
+                        return redirect(url_for('login'))
+        return render_template('reset_password_request.html',title='Reset Password', form=form)
+
+
+
 
 
 
@@ -1102,8 +1111,9 @@ def reset_password(token):
 
 
 ##reset from monday
-from forms import ForgotForm, PasswordResetForm
+from forms import ForgotForm, PasswordResetForm, Email
 import uuid
+
 
 @app.route('/forgot', methods=('GET','POST'))
 def forgot():
@@ -1111,21 +1121,23 @@ def forgot():
     message = None
     form = ForgotForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data.lower().first())
+        user = User.query.filter_by(email=form.email.data.lower()).first()
         if user:
             code = str(uuid.uuid4())
-            user.change_configuration={
-                "password_reset_code":code
+            User.change_configuration={
+                "password_reset_code": code,
+                "email":user.email,
             }
             db.session.add(user)
             db.session.commit()
             #email user
             body_html = render_template('password_reset.html',user=user)
             body_text = render_template('password_reset.txt', user=user)
-            email(user.email,"password reset request", body_html, body_text)
+            Email(user.email, "password reset request", body_html, body_text)
 
-        message = "you will recive a password reset email if we find the email"
-    return render_template('forgot.html',form=form, error=error)
+
+        message = "You will recive a password reset email if we find the email address in our database."
+    return render_template('forgot.html',form=form, error=error, message=message)
 
 
 

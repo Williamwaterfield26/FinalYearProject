@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log In</title>
-    <link href="{{url_for('static', filename='css/main4.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/main3.css')}}" rel="stylesheet">
 </head>
 <body>
  
@@ -15,21 +15,25 @@
         <h1>Labels Suit Agency <img id ="logo-tick" src=./resources/images/Logo.png alt=""> </h1> </h1>
         
         <!-- add nav bar and log in sign up-->
-
+        <div class="boxed">
+            <div class="check"></div>
+        </div>
     </div>
 
     {{wtf.quick_form(form)}}
 
+    <p>Forgot Your Password?</p>
+
     <p>
         Forgot Your Password?
-        <a href="reset_password_request">Click to Reset It</a>
+        <a href="{{ url_for('reset_password_request') }}">Click to Reset It</a>
     </p>
-
     <!-- reset password 3 lines-->
+    <!---
     {{render_field(form.username, class='form-control')}}
     {{render_field(form.password, **{"class":'form-control',"aria-described-by":"passwordHelpBlock"})}}
-    
-    <span id ="passwordHelpBlock" class="help-block"><a href="{{url_for('.forgot') }}">Forgot Password2</a></span>
+   -->
+    <span id ="passwordHelpBlock" class="help-block"><a href="{{url_for('.forgot') }}">Forgot Password</a></span>
 
     <br>
     <br>

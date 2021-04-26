@@ -11,37 +11,26 @@ from wtforms.fields.html5 import EmailField
 class SignUpForm(FlaskForm):
     ausername = StringField('Username')
     apassword = PasswordField('Password')
-    email = StringField('Email')
+    email = EmailField('Email')
     submit = SubmitField('Sign Up')
     
-#    def __init__(self, username, password, email, submit):
-#        self.username = username
-#        self.password = password
-#        self.email = email
-#        self.submit = submit
-
 
 class SignInForm(FlaskForm):
     ausername = StringField('Username')
     apassword = PasswordField('Password')
     submit = SubmitField('Sign In')
 
-#    def __init__ (self, username, password, submit):
-#        self.username = username
-#        self.password = password
-#        self.submit = submit
+
 
 class AddCustomerForm(FlaskForm):
     customerid = HiddenField()
     customerfirstname = StringField('Customer Firstname',[InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Firstname"),
-    Length(max=20, message="Too long Firstname")
     ])
     customersurname = StringField('Customer Surname',[InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Surname"),
-    Length(max=20, message="Too long Surname")
     ])
-    email = StringField('Email',[InputRequired(),
+    email = EmailField('Email',[InputRequired(),
     ])
     submit = SubmitField ('Add')
 
@@ -50,13 +39,11 @@ class AddSoldItemForm(FlaskForm):
     solditemid = HiddenField()
     customerfirstname = StringField('Customer Firstname',[InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Firstname"),
-    Length(max=20, message="Too long Firstname")
     ])
     customersurname = StringField('Customer Surname',[InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Surname"),
-    Length(max=20, message="Too long Surname")
     ])
-    email = StringField('Email',[InputRequired(),
+    email = EmailField('Email',[InputRequired(),
     #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
     ])
     stockid = IntegerField('Stock ID', [InputRequired(),
@@ -69,14 +56,13 @@ class AddSoldItemForm(FlaskForm):
     NumberRange(min=1.00, max=4000, message= "Invalid Supplier ID")
     ])
     suppliername = StringField('Supplier Name', [InputRequired(),
-    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Supplier Name"),
     ])
     submit = SubmitField('Add Sold Item')
 
 class DeleteSoldItemForm(FlaskForm):
     customerfirstname =StringField('Customer Firstname')
     customersurname = StringField('Customer Surname')
-    email = StringField('Email')
+    email = EmailField('Email')
     stockid =IntegerField('Stock ID')
     price = IntegerField('Price')
     supplierid = IntegerField('Supplier ID')
@@ -101,13 +87,11 @@ class EditSoldItemForm(FlaskForm):
     solditemid = HiddenField()
     customerfirstname = StringField('Customer Firstname',[InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Firstname"),
-    Length(max=20, message="Too long Firstname")
     ])
     customersurname = StringField('Customer Surname',[InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Surname"),
-    Length(max=20, message="Too long Surname")
     ])
-    email = StringField('Email',[InputRequired(),
+    email = EmailField('Email',[InputRequired(),
     #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
     ])
     stockid = IntegerField('StockS ID', [InputRequired(),
@@ -120,7 +104,6 @@ class EditSoldItemForm(FlaskForm):
     NumberRange(min=1.00, max=4000, message= "Invalid Supplier ID")
     ])
     suppliername = StringField('Supplier Name', [InputRequired(),
-    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Supplier Name"),
     ])
     update =SubmitField('Update')
     cancel =SubmitField('Cancel')
@@ -156,7 +139,6 @@ class AddStockForm(FlaskForm):
 class AddSupplierForm(FlaskForm):
     supplierid = HiddenField()
     suppliername = StringField('Supplier Name', [InputRequired(),
-    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Supplier Name"),
     ])
     submit = SubmitField('Add Supplier')
 
@@ -186,13 +168,11 @@ class CustomerSearchForm(FlaskForm):
 class EditCustomerForm(FlaskForm):
     customerfirstname = StringField('Customer Firstname',[InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Firstname"),
-    Length(max=20, message="Too long Firstname")
     ])
     customersurname = StringField('Customer Surname',[InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Surname"),
-    Length(max=20, message="Too long Surname")
     ])
-    email = StringField('Email',[InputRequired(),
+    email = EmailField('Email',[InputRequired(),
     #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
     ])
     update = SubmitField('Update')
@@ -206,13 +186,12 @@ class EditCustomerForm(FlaskForm):
 class DeleteCustomerForm(FlaskForm):
     customerfirstname =StringField('Customer Firstname')
     customersurname =StringField('Customer Surname')
-    email =StringField('Email')
+    email =EmailField('Email')
     delete = SubmitField('Delete')
 
 
 class EditSupplierForm(FlaskForm):
     suppliername = StringField('Supplier Name', [InputRequired(),
-    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Supplier Name"),
     ])
     update = SubmitField('Update')
     cancel = SubmitField('Cancel')
@@ -273,7 +252,7 @@ class EditStockForm(FlaskForm):
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Material"),
     ])
     update = SubmitField('Update')
-    cancel = SubmitField('Cancel')
+
 
 class StockSearchForm(FlaskForm):
     choices = [('stockid', 'stockid')]
@@ -289,7 +268,6 @@ class DeleteStockForm(FlaskForm):
     supplierid =IntegerField('supplierid')
     material = StringField('material')
     delete = SubmitField('Delete')
-    cancel = SubmitField('Cancel')
 
 
 
@@ -302,9 +280,6 @@ class EditUserForm(FlaskForm):
     username = StringField('Username', [InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Username"),
     ])
-    password = StringField('Password', [InputRequired(),
-    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Password"),
-    ])
     email = StringField('Email',[InputRequired(),
     #Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Customer Email"),
     ])
@@ -312,7 +287,7 @@ class EditUserForm(FlaskForm):
 
 class DeleteUserForm(FlaskForm):
     username = StringField('Username')
-    email = StringField('Email')
+    email = EmailField('Email')
     delete = SubmitField('Delete')
 
 class LoginForm(FlaskForm):
@@ -324,7 +299,7 @@ class LoginForm(FlaskForm):
 class RegisterForm(FlaskForm):
     username = StringField("username", validators=[DataRequired()])
     password = PasswordField("password", validators=[DataRequired()])
-    email = StringField("email", validators=[DataRequired(), Email()])
+    email = EmailField("email", validators=[DataRequired(), Email()])
     submit = SubmitField('Register')
 
 class AddUserForm(FlaskForm):
@@ -335,25 +310,25 @@ class AddUserForm(FlaskForm):
     password = StringField('Password', [InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Password"),
     ])
-    email = StringField('Email',[InputRequired(),
+    email = EmailField('Email',[InputRequired(),
     ])
     submit = SubmitField('Register')
 
 
 class ResetPasswordRequestForm(FlaskForm):
-    email = StringField('Email',validators = [DataRequired(), Email()])
+    email = EmailField('Email',validators = [DataRequired(), Email()])
     submit = SubmitField ('Request Password Reset')
 
 
 class ResetPasswordForm(FlaskForm):
-    password = PasswordField('New Password', [InputRequired(), EqualTo('confirm', message='Passwords must match')])
-    confirm  = PasswordField('Repeat Password')
+    # password = PasswordField('New Password', [InputRequired(), EqualTo('confirm', message='Passwords must match')])
+    # confirm  = PasswordField('Repeat Password')
 
 
-    # password = PasswordField('Password', validators=[DataRequired()])
-    # password2 = PasswordField(
-    #     'Repeat Password', validators=[DataRequired(), EqualTo('password')])
-    # submit = SubmitField('Request Password Reset')
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField(
+        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Request Password Reset')
 
 
         # password = PasswordField('Password', validators=[DataRequired(),EqualTo('password2',
@@ -368,9 +343,10 @@ class ResetPasswordForm(FlaskForm):
 #     # )
 
 class PasswordResetForm(FlaskForm):
-    current_password = PasswordField('Current Password', validators =[DataRequired()]
+    current_password = PasswordField('Current Password', [validators.DataRequired()]
     )
 
 class ForgotForm(FlaskForm):
     email = EmailField('Email', [validators.DataRequired(), validators.Email()]
     )
+    
