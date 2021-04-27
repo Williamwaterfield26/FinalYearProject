@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{url_for('static', filename='css/picturesstart.css')}}" rel="stylesheet">
+</head>
+<body>
+ 
+    <div class="banner">
+        <h1>Labels Suit Agency <img id ="logo-tick" src=./resources/images/Logo.png alt=""> </h1> </h1>
+        
+        <!-- add nav bar and log in sign up-->
+        <div class="boxed">
+            <div class="check"></div>
+        </div>
+    </div>
+
+    {{wtf.quick_form(form)}}
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class="flash">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+
+
+    <div class="back">
+        <a href="./"><button>Back</button></a>
+
+    </div>
+
+</body>
+</html>

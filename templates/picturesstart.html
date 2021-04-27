@@ -1,0 +1,76 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "base.html"%}
+
+{% block head %} 
+<title>Stock Page</title>
+{% endblock %}
+
+{% block body %}
+<h2>Stock Page</h2S>
+    <br>
+    </br>
+{{ wtf.quick_form(form) }}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    <ul class="flash">
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+{% endwith %}
+<a href="./allstock"><button>All Stock</button></a>
+<a href="./addstock"><button>Add Stock</button></a>
+
+
+<div class="back">
+    <a href="./loggedin"><button>Back</button></a>
+
+</div>
+<div class ="box">
+
+    <br></br>
+
+
+    <section data-name = "canali">
+    <div class="container">
+        <img src="img/Canali Grey Suit.jpg">
+        <div class="overlay">
+        <div class="text">£430</div>
+        </div>
+    </div>
+    <p> Canali Grey Suit</p>
+    <p> Stock ID: 12 </p>
+    <p> Supplier ID: 3</p>
+    </section>
+    <section data-name = "oscar">
+    <div class="container">
+        <img src="./OscarJacobsonSuitnavy.jpg">
+        <div class="overlay">
+        <div class="text">£270</div>
+        </div>
+    </div>
+    <p> Oscar Jacobson Suit navy</p>
+    </section>
+    <section data-name = "paulsmith">
+    <div class="container">
+        <img src="img/Paul Smith terquoise suit.jpg">
+        <div class="overlay">
+        <div class="text">£540</div>
+        </div>
+    </div>
+    <p> Paul Smith terquoise suit </p>
+    </section>
+    <section data-name = "tiger">
+    <div class="container">
+        <img src="img/Tiger of Sweden slim flit wool blazer grey.jpg">
+        <div class="overlay">
+        <div class="text">£350</div>
+        </div>
+    </div>
+    <p>Tiger of Sweden slim flit wool blazer grey </p>
+    </section>
+
+    </div>
+
+{% endblock %}

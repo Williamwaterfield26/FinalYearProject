@@ -1,5 +1,6 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% extends "base.html"%}
+{% if request.user.is_authenticated and request.user.is_admin %}
 
 {% block head %} 
 

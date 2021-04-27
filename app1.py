@@ -574,6 +574,9 @@ class solditem(db.Model):
 
 
 
+
+
+
 @app.route('/addsolditem', methods=['GET', 'POST'])
 @login_required
 def addsolditem():
@@ -762,9 +765,11 @@ def alluser():
 @app.route('/userpage', methods = ['GET', 'POST'])
 @login_required
 def userpage():
-        search = UserSearchForm(request.form)
-        if request.method == 'POST':
-                return searchuserresults(search)
+        user = User.query.filter_by()
+        if user:
+                search = UserSearchForm(request.form)
+                if request.method == 'POST':
+                        return searchuserresults(search)
 
         return render_template('userpage.html', form=search)
 
@@ -1160,7 +1165,14 @@ def not_found_error(error):
     return render_template('401.html')
 
 
-
+#stock page
+@app.route('/picturesstart', methods = ['GET', 'POST'])
+@login_required
+def picturesstart():
+        search = StockSearchForm(request.form)
+        if request.method == 'POST':
+                return searchstockresults(search)
+        return render_template('picturesstart.html', form=search)
 
 
 if __name__ == "__main__":
