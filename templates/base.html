@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- <link rel="stylesheet" href="main.css"> -->
-    <link href="{{url_for('static', filename='css/main3.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/working210.css')}}" rel="stylesheet">
         {% block head %} {% endblock %}
 </head>
 <body>
@@ -12,8 +12,9 @@
     <div class="boxed">
         <div class="check"></div>
     </div>
+    <br></br>
 
-    <nav>
+    <nav class="nav">
         <a href="/loggedin">Home</a>
         <a href="/userpage">Users</a>
         <a href="/solditempage">Sold Items</a>
@@ -24,7 +25,7 @@
         <a href="/currentuser">Current User</a>
         <a href="/logout">Log out</a>
     </nav>
-
+    <br></br>
     {% block body %}{% endblock %}
 </body>
 </html>

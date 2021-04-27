@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log In</title>
-    <link href="{{url_for('static', filename='css/main3.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/login.css')}}" rel="stylesheet">
 </head>
 <body>
  
@@ -33,16 +33,16 @@
     {% endwith %}
     <p>Forgot Your Password?</p>
 
-    <p>
+    <!-- <p>
         Forgot Your Password?
         <a href="{{ url_for('reset_password_request') }}">Click to Reset It</a>
-    </p>
+    </p> -->
     <!-- reset password 3 lines-->
     <!---
     {{render_field(form.username, class='form-control')}}
     {{render_field(form.password, **{"class":'form-control',"aria-described-by":"passwordHelpBlock"})}}
    -->
-    <span id ="passwordHelpBlock" class="help-block"><a href="{{url_for('.forgot') }}">Forgot Password</a></span>
+    <span id ="passwordHelpBlock" class="help-block"><a href="{{url_for('.forgot') }}">Click to change Password</a></span>
 
     <br>
     <br>

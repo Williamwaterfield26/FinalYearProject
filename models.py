@@ -1,20 +1,71 @@
-# from time import time
-# import jwt
-# from app import app
+class supplier(db.Model):
+        __tablename__ = 'supplier'
+        supplierid = db.Column(db.Integer, primary_key = True)
+        suppliername = db.Column(db.String)
 
-# class User(UserMixin, db.Model):
-#     # ...
 
-#     def get_reset_password_token(self, expires_in=600):
-#         return jwt.encode(
-#             {'reset_password': self.id, 'exp': time() + expires_in},
-#             app.config['SECRET_KEY'], algorithm='HS256')
 
-#     @staticmethod
-#     def verify_reset_password_token(token):
-#         try:
-#             id = jwt.decode(token, app.config['SECRET_KEY'],
-#                             algorithms=['HS256'])['reset_password']
-#         except:
-#             return
-#         return User.query.get(id)
+
+
+        def __init__(self, suppliername):
+                self.suppliername = suppliername
+    
+
+
+class stock(db.Model):
+    __tablename__ = 'stock'
+    stockid = db.Column(db.Integer, primary_key = True)
+    size = db.Column(db.String(3))
+    type = db.Column(db.String)
+    colour = db.Column(db.String)
+    brand = db.Column(db.String)
+    price = db.Column(db.Float)
+    material = db.Column(db.String)
+
+    supplierid = db.Column(
+        db.Integer,
+        db.ForeignKey('supplier.supplierid'),
+        nullable=False)
+
+
+
+
+
+    def __init__(self,size,type,colour,brand,price,material,supplierid):
+        self.size = size
+        self.type = type
+        self.colour = colour
+        self.brand = brand
+        self.price = price
+        self.material = material
+        self.supplierid = supplierid
+
+
+
+class solditem(db.Model):
+    __tablename__ = 'solditem'
+    solditemid = db.Column(db.Integer, primary_key = True)
+    customerfirstname = db.Column(db.String())
+    customersurname = db.Column(db.String)
+    email = db.Column(db.String)
+    stockid = db.Column(
+        db.Integer,
+        db.ForeignKey('stock.stockid'),
+        nullable=False)
+    price = db.Column(db.Float)
+    supplierid = db.Column(
+        db.Integer,
+        db.ForeignKey('supplier.supplierid'),
+        nullable=False)
+    suppliername = db.Column(db.String)
+
+
+
+    def __init__(self,customerfirstname, customersurname, email, stockid, price, supplierid, suppliername):
+        self.customerfirstname = customerfirstname
+        self.customersurname = customersurname
+        self.email = email
+        self.stockid = stockid
+        self.price = price
+        self.supplierid = supplierid
+        self.suppliername = suppliername

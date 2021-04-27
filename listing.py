@@ -4,12 +4,12 @@
 class listing(db.Model):
         __tablename__ = 'listing'
         listingid = db.Column(db.Integer, primary_key = True)
-        supplierid = db.Column(db.Integer)
+        stockid = db.Column(db.Integer)
         price = db.Column(db.Float)
 
 
-        def __init__(self, supplierid, price):
-                self.supplierid = supplierid
+        def __init__(self, stockid, price):
+                self.stockid = stockid
                 self.price = price
     
 @app.route('/addlisting', methods=['GET', 'POST'])
@@ -69,7 +69,7 @@ def editlisting(listingid):
                 return 'Error loading the listing'. format(listingid=listingid )
 
 
-def save_listing(supplierid, form, new=False):
+def save_listing(stockid, form, new=False):
         stockid.stockid = form.stockid.data
         stockid.price = form.price.data
         if new:

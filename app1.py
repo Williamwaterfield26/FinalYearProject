@@ -397,22 +397,26 @@ class stock(db.Model):
     colour = db.Column(db.String)
     brand = db.Column(db.String)
     price = db.Column(db.Float)
-    supplierid = db.Column(db.Integer)
     material = db.Column(db.String)
 
+    supplierid = db.Column(
+        db.Integer,
+        db.ForeignKey('supplier.supplierid'),
+        nullable=False)
 
 
-    def __init__(self,size,type,colour,brand,price,supplierid,material):
+
+
+
+    def __init__(self,size,type,colour,brand,price,material,supplierid):
         self.size = size
         self.type = type
         self.colour = colour
         self.brand = brand
         self.price = price
-        self.supplierid = supplierid
         self.material = material
+        self.supplierid = supplierid
 
-
-                
 
 
 
@@ -421,17 +425,17 @@ class stock(db.Model):
 @login_required
 def addstock():
         form = AddStockForm()
+        form.supplierid.choices = [(supplierid)for supplierid in supplier.query.all()]
         if form.validate_on_submit():
                 size = request.form['size']
                 type = request.form['type']
                 colour = request.form['colour']
                 brand = request.form['brand']
                 price = request.form['price']
-                supplierid = request.form['supplierid']
                 material = request.form['material']
-
+                supplierid = request.form['supplierid']
                 
-                record = stock(size,type,colour,brand,price,supplierid,material)
+                record = stock(size,type,colour,brand,price,material,supplierid)
                 db.session.add(record)
                 db.session.commit()
                 message = f"The Stock has been submitted"
@@ -456,6 +460,7 @@ def deletestock(stockid):
         stockid = qry.first()
         if stockid:
                 form = DeleteStockForm(formdata=request.form, obj=stockid)
+                form.supplierid.choices = [(supplierid)for supplierid in supplier.query.all()]
                 if request.method == 'POST' and form.validate():
                         db.session.delete(stockid)
                         db.session.commit()
@@ -473,6 +478,7 @@ def editstock(stockid):
         stockid = qry.first()
         if stockid:
                 form = EditStockForm(formdata=request.form, obj = stockid)
+                form.supplierid.choices = [(supplierid)for supplierid in supplier.query.all()]
                 if request.method == 'POST' and form.validate():
                         save_stock(stockid,form)
 
@@ -503,8 +509,8 @@ def save_stock(stockid, form, new=False):
         stockid.colour = form.colour.data
         stockid.brand = form.brand.data
         stockid.price = form.price.data
-        stockid.supplierid = form.supplierid.data
         stockid.material = form.material.data
+        stockid.supplierid = form.supplierid.data
         if new:
                 db.session.add(stockid)
         db.session.commit()
@@ -544,9 +550,15 @@ class solditem(db.Model):
     customerfirstname = db.Column(db.String())
     customersurname = db.Column(db.String)
     email = db.Column(db.String)
-    stockid = db.Column(db.Integer)
+    stockid = db.Column(
+        db.Integer,
+        db.ForeignKey('stock.stockid'),
+        nullable=False)
     price = db.Column(db.Float)
-    supplierid = db.Column(db.Integer)
+    supplierid = db.Column(
+        db.Integer,
+        db.ForeignKey('supplier.supplierid'),
+        nullable=False)
     suppliername = db.Column(db.String)
 
 
@@ -566,6 +578,8 @@ class solditem(db.Model):
 @login_required
 def addsolditem():
         form = AddSoldItemForm()
+        form.stockid.choices = [(stockid)for stockid in stock.query.all()]
+        form.supplierid.choices = [(supplierid)for supplierid in supplier.query.all()]
         if form.validate_on_submit():
                 customerfirstname = request.form['customerfirstname']
                 customersurname = request.form['customersurname']
@@ -606,6 +620,8 @@ def deletesolditem(solditemid):
         customersurname = qry.first()
         if customersurname:
                 form = DeleteSoldItemForm(formdata=request.form, obj=customersurname)
+                form.stockid.choices = [(stockid)for stockid in stock.query.all()]
+                form.supplierid.choices = [(supplierid)for supplierid in supplier.query.all()]
                 if request.method == 'POST' and form.validate():
                         db.session.delete(customersurname)
                         db.session.commit()
@@ -623,6 +639,8 @@ def editsolditem(solditemid):
         solditemid = qry.first()
         if solditemid:
                 form = EditSoldItemForm(formdata=request.form, obj = solditemid)
+                form.stockid.choices = [(stockid)for stockid in stock.query.all()]
+                form.supplierid.choices = [(supplierid)for supplierid in supplier.query.all()]
                 if request.method == 'POST' and form.validate():
                         save_solditem(solditemid,form)
 
@@ -822,29 +840,30 @@ def deleteuser(id):
                 return 'Error deleting User'. format(id=id)
 
 
-
 class listing(db.Model):
         __tablename__ = 'listing'
         listingid = db.Column(db.Integer, primary_key = True)
-        supplierid = db.Column(db.Integer)
+        stockid = db.Column(
+            db.Integer,
+            db.ForeignKey('stock.stockid'),
+            nullable=False)
         price = db.Column(db.Float)
 
 
-        def __init__(self, supplierid, price):
-                self.supplierid = supplierid
+        def __init__(self, stockid, price):
+                self.stockid = stockid
                 self.price = price
     
-
-
 @app.route('/addlisting', methods=['GET', 'POST'])
 @login_required
 def addlisting():
         form = AddListingForm()
+        form.stockid.choices = [(stockid)for stockid in stock.query.all()]
         if form.validate_on_submit():
-                supplierid = request.form['supplierid']
+                stockid = request.form['stockid']
                 price = request.form['price']
                 
-                record = listing(supplierid, price)
+                record = listing(stockid, price)
                 db.session.add(record)
                 db.session.commit()
                 flash("The Listing has been submitted")
@@ -867,40 +886,48 @@ def addlisting():
 @login_required
 def deletelisting(listingid):
         qry = db.session.query(listing).filter(listing.listingid==listingid)
-        supplierid = qry.first()
-        if supplierid:
-                form = DeleteListingForm(formdata=request.form, obj=supplierid)
+        stockid = qry.first()
+        if stockid:
+                form = DeleteListingForm(formdata=request.form, obj=stockid)
+                form.stockid.choices = [(stockid)for stockid in stock.query.all()]
                 if request.method == 'POST' and form.validate():
-                        db.session.delete(supplierid)
+                        db.session.delete(stockid)
                         db.session.commit()
                         flash('Listing deleted succesfully!')
                         return redirect('/listingpage')
                 return render_template('listingpage.html', form=form)
         else:
                 return 'Error deleting listing'.format(listingid=listingid)
-        
+
+
 
 @app.route('/editlisting<int:listingid>', methods=['GET', 'POST'])
 @login_required
 def editlisting(listingid):
         qry = db.session.query(listing).filter(listing.listingid==listingid)
-        supplierid = qry.first()
-        if supplierid:
-                form = EditListingForm(formdata=request.form, obj=supplierid)
+        stockid = qry.first()
+        if stockid:
+                form = EditListingForm(formdata=request.form, obj=stockid)
+                form.stockid.choices = [(stockid)for stockid in stock.query.all()]
                 if request.method == 'POST' and form.validate():
-                        save_listing(supplierid,form)
+                        save_listing(stockid,form)
                         flash ('Listing Updated!')
                         return redirect('/listingpage')
                 return render_template('listingpage.html', form=form)
         else:
                 return 'Error loading the listing'. format(listingid=listingid )
 
-def save_listing(supplierid, form, new=False):
-        supplierid.supplierid = form.supplierid.data
-        supplierid.price = form.price.data
+
+
+
+def save_listing(stockid, form, new=False):
+        stockid.stockid = form.stockid.data
+        stockid.price = form.price.data
         if new:
-                db.session.add(supplierid)
+                db.session.add(stockid)
         db.session.commit()
+
+
 
 @app.route('/listingresults')
 @login_required
@@ -908,8 +935,8 @@ def searchlistingresults(search):
         results=[]
         search_string = search.data['search']
         if search_string:
-                if search.data ['select'] == 'supplierid':
-                        qry = db.session.query(listing).filter(listing.supplierid.contains(search_string))
+                if search.data ['select'] == 'stockid':
+                        qry = db.session.query(listing).filter(listing.stockid.contains(search_string))
                         results = qry.all()
                 else:
                         qry = db.sesssion.query(listing)
@@ -932,6 +959,8 @@ def alllisting():
         table=ListingResults(results)
         table.border =True
         return render_template('alllisting.html', table=table)
+
+
 
 
 

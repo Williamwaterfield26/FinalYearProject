@@ -19,13 +19,15 @@ class SupplierResults(Table):
         edit = LinkCol('Edit', 'editsupplier', url_kwargs=dict(supplierid='supplierid'))
         delete = LinkCol('Delete', 'deletesupplier', url_kwargs=dict(supplierid='supplierid'))
         
-
 class ListingResults(Table):
         listingid = Col('listingid', show= False)
-        supplierid = Col('Supplierid')
+        stockid = Col('Stockid')
         price = Col('Price')
         edit = LinkCol('Edit', 'editlisting', url_kwargs=dict(listingid='listingid'))
         delete = LinkCol('Delete', 'deletelisting', url_kwargs=dict(listingid='listingid'))
+
+
+
 
 class StockResults(Table):
         stockid = Col('Stockid', show= True)
@@ -34,8 +36,8 @@ class StockResults(Table):
         colour = Col('Colour')
         brand = Col('Brand')
         price = Col('Price')
-        supplierid = Col('Supplierid')
         material = Col('Material')
+        supplierid = Col('Supplierid')
         edit = LinkCol('Edit', 'editstock', url_kwargs=dict(stockid='stockid'))
         delete = LinkCol('Delete', 'deletestock', url_kwargs=dict(stockid='stockid'))
 

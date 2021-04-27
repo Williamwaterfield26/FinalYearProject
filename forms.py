@@ -33,15 +33,11 @@ class AddSoldItemForm(FlaskForm):
     ])
     email = EmailField('Email',[InputRequired(),
     ])
-    stockid = IntegerField('Stock ID', [InputRequired(),
-    NumberRange(min=1.00, max=4000, message= "Invalid Stock ID")
-    ])
+    stockid = SelectField('stockid', choices=[])
     price = FloatField('Price', [InputRequired(),
     NumberRange(min=1.00, message= "Invalid Price Range. Please enter a price of at least £1"),
     ])
-    supplierid = IntegerField('Supplier ID', [InputRequired(),
-    NumberRange(min=1.00, max=4000, message= "Invalid Supplier ID")
-    ])
+    supplierid = SelectField('supplierid', choices=[])
     suppliername = StringField('Supplier Name', [InputRequired(),
     ])
     submit = SubmitField('Add Sold Item')
@@ -50,9 +46,9 @@ class DeleteSoldItemForm(FlaskForm):
     customerfirstname =StringField('Customer Firstname')
     customersurname = StringField('Customer Surname')
     email = EmailField('Email')
-    stockid =IntegerField('Stock ID')
+    stockid = SelectField('stockid', choices=[])
     price = IntegerField('Price')
-    supplierid = IntegerField('Supplier ID')
+    supplierid = SelectField('supplierid', choices=[])
     suppliername = StringField('Supplier Name')
     delete = SubmitField('Delete')
 
@@ -80,19 +76,14 @@ class EditSoldItemForm(FlaskForm):
     ])
     email = EmailField('Email',[InputRequired(),
     ])
-    stockid = IntegerField('StockS ID', [InputRequired(),
-    NumberRange(min=1.00, max=4000, message= "Invalid Stock ID")
-    ])
+    stockid = SelectField('stockid', choices=[])
     price = FloatField('Price', [InputRequired(),
     NumberRange(min=1.00, message= "Invalid Price Range. Please enter a price of at least £1"),
     ])
-    supplierid = IntegerField('Supplier ID', [InputRequired(),
-    NumberRange(min=1.00, max=4000, message= "Invalid Supplier ID")
-    ])
+    supplierid = SelectField('supplierid', choices=[])
     suppliername = StringField('Supplier Name', [InputRequired(),
     ])
     update =SubmitField('Update')
-    cancel =SubmitField('Cancel')
 
 
 class AddStockForm(FlaskForm):
@@ -113,14 +104,14 @@ class AddStockForm(FlaskForm):
     price = FloatField('Price', [InputRequired(),
     NumberRange(min=1.00, message= "Invalid Price Range. Please enter a price of at least £1"),
     ])
-    supplierid = IntegerField('Supplier ID', [InputRequired(),
-    NumberRange(min=1.00, max=4000, message= "Invalid Supplier ID")
-    ])
     material = StringField('Material', [InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Material"),
     ])
+    supplierid = SelectField('supplierid', choices=[])
     submit = SubmitField('Add Stock')
     
+
+
 
 class AddSupplierForm(FlaskForm):
     supplierid = HiddenField()
@@ -128,16 +119,15 @@ class AddSupplierForm(FlaskForm):
     ])
     submit = SubmitField('Add Supplier')
 
+
+
 class AddListingForm(FlaskForm):
     listingid = HiddenField()
-    supplierid = IntegerField('Supplier ID', [InputRequired(),
-    NumberRange(min=1.00, max=4000, message= "Invalid Supplier ID")
-    ])
+    stockid = SelectField('stockid', choices=[])
     price = FloatField('Price', [InputRequired(),
     NumberRange(min=1.00, message= "Invalid Price Range. Please enter a price of at least £1"),
     ])
     submit = SubmitField('Add Listing')
-
 
 
 
@@ -157,7 +147,7 @@ class EditCustomerForm(FlaskForm):
     email = EmailField('Email',[InputRequired(),
     ])
     update = SubmitField('Update')
-    cancel = SubmitField('Cancel')
+
 
 
 
@@ -172,7 +162,7 @@ class EditSupplierForm(FlaskForm):
     suppliername = StringField('Supplier Name', [InputRequired(),
     ])
     update = SubmitField('Update')
-    cancel = SubmitField('Cancel')
+
 
 class DeleteSupplierForm(FlaskForm):
     suppliername= StringField('Supplier Name')
@@ -184,10 +174,10 @@ class SupplierSearchForm(FlaskForm):
     search = StringField('')
 
 
+
+
 class EditListingForm(FlaskForm):
-    supplierid = IntegerField('Supplier ID', [InputRequired(),
-    NumberRange(min=1.00, max=4000, message= "Invalid Supplier ID")
-    ])
+    stockid = SelectField('stockid', choices=[])
     price = FloatField('Price', [InputRequired(),
     NumberRange(min=1.00, max=4000, message= "Invalid Price Range. Please enter a price of at least £1"),
     ])
@@ -195,16 +185,17 @@ class EditListingForm(FlaskForm):
     cancel = SubmitField('Cancel')
 
 
-
 class DeleteListingForm(FlaskForm):
-    supplierid= IntegerField('Supplier ID')
+    stockid = SelectField('stockid', choices=[])
     price= IntegerField('Price')
     delete = SubmitField('Delete')
 
 class ListingSearchForm(FlaskForm):
-    choices = [('supplierid', 'supplierid')]
+    choices = [('stockid', 'stockid')]
     select = SelectField ('Search for a listing', choices=choices)
     search = StringField('')
+
+
 
 class EditStockForm(FlaskForm):
     size = StringField('Size', [InputRequired(),
@@ -223,12 +214,10 @@ class EditStockForm(FlaskForm):
     price = FloatField('Price', [InputRequired(),
     NumberRange(min=1.00, message= "Invalid Price Range. Please enter a price of at least £1"),
     ])
-    supplierid = IntegerField('Supplier ID', [InputRequired(),
-    NumberRange(min=1.00, max=4000, message= "Invalid Supplier ID")
-    ])
     material = StringField('Material', [InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Material"),
     ])
+    supplierid = SelectField('supplierid', choices=[])
     update = SubmitField('Update')
 
 
@@ -243,8 +232,8 @@ class DeleteStockForm(FlaskForm):
     colour = StringField('colour')
     brand = StringField('brand')
     price = IntegerField('price')
-    supplierid =IntegerField('supplierid')
     material = StringField('material')
+    supplierid = SelectField('supplierid', choices=[])
     delete = SubmitField('Delete')
 
 
@@ -257,6 +246,7 @@ class UserSearchForm(FlaskForm):
 class EditUserForm(FlaskForm):
     username = StringField('Username', [InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Username"),
+    Length(min=1,max=10, message="Too many characters for your username")
     ])
     email = StringField('Email',[InputRequired(),
     ])
@@ -268,14 +258,22 @@ class DeleteUserForm(FlaskForm):
     delete = SubmitField('Delete')
 
 class LoginForm(FlaskForm):
-    username = StringField("username", validators=[DataRequired()])
-    password = PasswordField("password", validators=[DataRequired()])
+    username = StringField("username", validators=[DataRequired(),
+    Length(min=1,max=10, message="Too many characters for your username")
+    ])
+    password = PasswordField("password", validators=[DataRequired(),
+    Length(min=1,max=10, message="Too many characters for your password")
+    ])
     remember_me = BooleanField()
     submit = SubmitField('Log In')
 
 class RegisterForm(FlaskForm):
-    username = StringField("username", validators=[DataRequired()])
-    password = PasswordField("password", validators=[DataRequired()])
+    username = StringField("username", validators=[DataRequired(),
+    Length(min=1,max=10, message="Too many characters for your username")
+    ])
+    password = PasswordField("password", validators=[DataRequired(),
+    Length(min=1,max=10, message="Too many characters for your password")
+    ])
     email = EmailField("email", validators=[DataRequired(), Email()])
     submit = SubmitField('Register')
 
