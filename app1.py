@@ -3,7 +3,7 @@ from forms import AddCustomerForm, AddStockForm, AddSupplierForm, AddListingForm
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
-from flask_login import UserMixin, LoginManager
+from flask_login import UserMixin, LoginManager, current_user
 from datetime import date
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import StringField, PasswordField, SubmitField, HiddenField, IntegerField, FloatField
@@ -833,16 +833,16 @@ def save_user(username, form, new=False):
 def deleteuser(id):
         qry = db.session.query(User).filter(User.id==id)
         username = qry.first()
-        if username:
+        if current_user.admin ==1:
                 form = DeleteUserForm(formdata=request.form, obj=username)
                 if request.method == 'POST' and form.validate():
                         db.session.delete(username)
                         db.session.commit()
                         flash('User deleted succesfully!')
                         return redirect('/userpage')
-                return render_template('deleteuser.html', form=form)
+                return render_template('deleteuser.html', form=form,User=User)
         else:
-                return 'Error deleting User'. format(id=id)
+                return render_template('usererror.html')
 
 
 class listing(db.Model):
@@ -1010,7 +1010,7 @@ def login():
 
         if form.validate_on_submit():
                 user = User.query.filter_by(username=username).first()
-
+                
                 if user and user.verify_password(password):
                         login_user(user)
                         flash("User Logged In!")
@@ -1032,6 +1032,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(10), unique=True, nullable=False)
     password = db.Column(db.String(10))
     email = db.Column(db.String(), unique=True, nullable=False)
+    admin = db.Column(db.Integer, default=0)
 
     def __init__(self, username, password, email):
         self.username = username

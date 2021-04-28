@@ -1,0 +1,14 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "base.html"%}
+
+{% block head %} 
+
+{% endblock %}
+{% block body %}
+<title> Non Admin Error</title>
+<h1> Non Admin Error. You are not authorized, please sign in as an admin to continue</h1>
+<div class="back">
+    <a href="./logout"><button>Sign In</button></a>
+
+</div>
+{% endblock %}

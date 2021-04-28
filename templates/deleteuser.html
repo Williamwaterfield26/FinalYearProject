@@ -8,8 +8,8 @@
 {% block body %}
 
 
-{% if current_user.id== id %}
-<h1> Do not Delete youself</h1>
+{% if current_user.admin== 1 %}
+<h1> Do not delete yourself</h1>
 {% endif %}
 
 

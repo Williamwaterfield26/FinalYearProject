@@ -62,7 +62,7 @@ class SoldItemSearchForm(FlaskForm):
 
 class ComplieMoniesDueForm(FlaskForm):
     choices = [('supplierid','supplierid')]
-    select = SelectField ('Search for the Money Owed to a supplier, type in a supplier ID( YOU MUST TYPE IN A FULL ID)', choices=choices)
+    select = SelectField ('Search for the Money Owed to a supplier, type in a supplier ID( YOU MUST TYPE IN A FULL ID e.g. <supplier 22>)', choices=choices)
     search = StringField('')
 
 
@@ -259,6 +259,7 @@ class DeleteUserForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     username = StringField("username", validators=[DataRequired(),
+    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Username"),
     Length(min=1,max=10, message="Too many characters for your username")
     ])
     password = PasswordField("password", validators=[DataRequired(),
@@ -269,7 +270,8 @@ class LoginForm(FlaskForm):
 
 class RegisterForm(FlaskForm):
     username = StringField("username", validators=[DataRequired(),
-    Length(min=1,max=10, message="Too many characters for your username")
+    Length(min=1,max=10, message="Too many characters for your username"),
+    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Username"),
     ])
     password = PasswordField("password", validators=[DataRequired(),
     Length(min=1,max=10, message="Too many characters for your password")
@@ -281,9 +283,10 @@ class AddUserForm(FlaskForm):
     id = HiddenField()
     username = StringField('Username', [InputRequired(),
     Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Username"),
+    Length(min=1,max=10, message="Too many characters for your username")
     ])
     password = StringField('Password', [InputRequired(),
-    Regexp(r'^[A-Za-z\s\-\'\'\/]+$', message= "Invalid Password"),
+    Length(min=1,max=10, message="Too many characters for your password")
     ])
     email = EmailField('Email',[InputRequired(),
     ])
