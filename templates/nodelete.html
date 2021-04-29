@@ -1,0 +1,15 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "base.html"%}
+
+{% block head %} 
+
+{% endblock %}
+{% block body %}
+<title> Non Admin Error</title>
+<h2>You have tried to delete yourself from the system. This is not possible</h2>
+<h2>Please perform a different task or click bellow to go to the home page</h2>
+<div class="back">
+    <a href="./loggedin"><button>Home</button></a>
+
+</div>
+{% endblock %}

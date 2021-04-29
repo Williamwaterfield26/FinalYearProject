@@ -12,7 +12,7 @@ from flask_table import Table, Col, LinkCol
 from django import forms
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
-from tables import CustomerResults, SupplierResults, ListingResults, StockResults, SoldItemResults, UserResults, MoniesDueResults
+from tables import CustomerResults, SupplierResults, ListingResults, StockResults, SoldItemResults, UserResults, MoniesDueResults,UserResults2
 from werkzeug.security import generate_password_hash, check_password_hash
 #from models import customer
 from flask_login import login_user, login_required, logout_user
@@ -158,6 +158,11 @@ def save_customer(customersurname, form, new=False):
 @login_required
 def results():
         return render_template('results.html')
+
+@app.route('/results2')
+@login_required
+def results2():
+        return render_template('results2.html')
 
 
 
@@ -745,21 +750,32 @@ def searchuserresults(search):
         if not results:
                 flash('No results found')
                 return redirect ('/userpage')
-        else:
+        if current_user.admin == 1:
                 table = UserResults(results)
                 table.border = True
                 return render_template('results.html', table=table)
-
+        else:
+                table = UserResults2(results)
+                table.border = True
+                return render_template('results2.html', table=table)
 #to retrieve all users
 @app.route('/alluser')
 @login_required
 def alluser():
-        results=[]
-        qry = db.session.query(User)
-        results = qry.all()
-        table=UserResults(results)
-        table.border =True
-        return render_template('alluser.html', table=table)
+        if current_user.admin ==1:                        
+                results=[]
+                qry = db.session.query(User)
+                results = qry.all()
+                table=UserResults(results)
+                table.border =True
+                return render_template('alluser.html', table=table)
+        else:
+                results2=[]
+                qry = db.session.query(User)
+                results2 = qry.all()
+                table=UserResults2(results2)
+                table.border =True
+                return render_template('alluser.html', table=table)
 
 #userpage
 @app.route('/userpage', methods = ['GET', 'POST'])
@@ -834,13 +850,17 @@ def deleteuser(id):
         qry = db.session.query(User).filter(User.id==id)
         username = qry.first()
         if current_user.admin ==1:
-                form = DeleteUserForm(formdata=request.form, obj=username)
-                if request.method == 'POST' and form.validate():
-                        db.session.delete(username)
-                        db.session.commit()
-                        flash('User deleted succesfully!')
-                        return redirect('/userpage')
-                return render_template('deleteuser.html', form=form,User=User)
+                if current_user.id != id:
+                        form = DeleteUserForm(formdata=request.form, obj=username)
+                        if request.method == 'POST' and form.validate():
+                                db.session.delete(username)
+                                db.session.commit()
+                                flash('User deleted succesfully!')
+                                return redirect('/userpage')
+                        return render_template('deleteuser.html', form=form,User=User)
+                else:
+                        return render_template('nodelete.html')                     
+
         else:
                 return render_template('usererror.html')
 
@@ -988,12 +1008,15 @@ def register():
 
         if form.validate_on_submit():
                 user = User.query.filter_by(email=email).first()
+                user2 = User.query.filter_by(username=username).first()
                 
                 if user:
                         flash("email already registered")
                         return redirect(url_for('register'))
-                
-                if not user:
+                if user2:
+                        flash("username already registered")
+                        return redirect(url_for('register'))
+                if not user or not user2:
                         record = User(username=username, password=password, email=email)
                         db.session.add(record)
                         db.session.commit()
@@ -1178,3 +1201,51 @@ def picturesstart():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+
+
+
+# @app.route('/deleteuser<int:id>', methods=['GET', 'POST'])
+# @login_required
+# def deleteuser(id):
+#         qry = db.session.query(User).filter(User.id==id)
+#         username = qry.first()
+#         if current_user.admin ==1:
+#                 if current_user.username != User.username:
+#                         form = DeleteUserForm(formdata=request.form, obj=username)
+#                         if request.method == 'POST' and form.validate():
+#                                 db.session.delete(username)
+#                                 db.session.commit()
+#                                 flash('User deleted succesfully!')
+#                                 return redirect('/userpage')
+#                         return render_template('deleteuser.html', form=form,User=User)
+#                 else:
+#                         return render_template('index.html')                     
+
+#         else:
+#                 return render_template('usererror.html')
+
+
+
+
+# #to delete user 
+# @app.route('/deleteuser<int:id>', methods=['GET', 'POST'])
+# @login_required
+# def deleteuser(id):
+#         qry = db.session.query(User).filter(User.id==id)
+#         username = qry.first()
+#         if current_user.admin ==1:
+#                 if current_user.id != id:
+#                         form = DeleteUserForm(formdata=request.form, obj=username)
+#                         if request.method == 'POST' and form.validate():
+#                                 db.session.delete(username)
+#                                 db.session.commit()
+#                                 flash('User deleted succesfully!')
+#                                 return redirect('/userpage')
+#                         return render_template('deleteuser.html', form=form,User=User)
+#                 else:
+#                         return render_template('index.html')                     
+
+#         else:
+#                 return render_template('usererror.html')

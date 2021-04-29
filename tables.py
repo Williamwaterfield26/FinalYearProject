@@ -61,6 +61,16 @@ class UserResults(Table):
         email = Col('Email')
         edit = LinkCol('Edit', 'edituser', url_kwargs=dict(id = 'id'))
         delete = LinkCol('Delete', 'deleteuser', url_kwargs=dict(id='id'))
-        
+
+class UserResults2(Table):
+        id = Col('User ID', show=False)
+        username = Col('Username')
+        password = Col('Password',show=False)
+        email = Col('Email')
+
+
+
+
+
 class MoniesDueResults(Table):
         price= Col('Price')
