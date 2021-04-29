@@ -210,7 +210,6 @@ text-align:center;
 nav{
   background-color: lightslategray;
   padding: 10px 0px;
-  border-right: 1px solid black;
   position: -webkit-sticky;
   position: sticky;
   top: 0px;
@@ -218,4 +217,8 @@ nav{
   text-align: center;
   justify-content: space-around;
   display: flex;
+  z-index: 1;
+}
+a.active{
+  background-color: grey;
 }
