@@ -14,7 +14,6 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 from tables import CustomerResults, SupplierResults, ListingResults, StockResults, SoldItemResults, UserResults, MoniesDueResults,UserResults2
 from werkzeug.security import generate_password_hash, check_password_hash
-#from models import customer
 from flask_login import login_user, login_required, logout_user
 import pandas as pd
 from django.db.models import Sum
@@ -24,6 +23,7 @@ import jwt
 from flask import Flask
 from flask_mail import Mail, Message
 from app.__init__ import app
+
 
 
 
@@ -46,6 +46,142 @@ migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db',MigrateCommand)
 
+
+
+
+### models
+
+class supplier(db.Model):
+        __tablename__ = 'supplier'
+        supplierid = db.Column(db.Integer, primary_key = True)
+        suppliername = db.Column(db.String)
+
+
+        def __init__(self, suppliername):
+                self.suppliername = suppliername
+    
+
+
+class customer(db.Model):
+    __tablename__ = 'customers'
+    customerid = db.Column(db.Integer, primary_key = True)
+    customerfirstname = db.Column(db.String)
+    customersurname = db.Column(db.String)
+    email = db.Column(db.String)
+
+    def __init__(self, customerfirstname, customersurname, email):
+        self.customerfirstname = customerfirstname
+        self.customersurname = customersurname
+        self.email = email
+    
+
+class stock(db.Model):
+    __tablename__ = 'stock'
+    stockid = db.Column(db.Integer, primary_key = True)
+    size = db.Column(db.String(3))
+    type = db.Column(db.String)
+    colour = db.Column(db.String)
+    brand = db.Column(db.String)
+    price = db.Column(db.Float)
+    material = db.Column(db.String)
+
+    supplierid = db.Column(
+        db.Integer,
+        db.ForeignKey('supplier.supplierid'),
+        nullable=False)
+
+
+
+
+
+    def __init__(self,size,type,colour,brand,price,material,supplierid):
+        self.size = size
+        self.type = type
+        self.colour = colour
+        self.brand = brand
+        self.price = price
+        self.material = material
+        self.supplierid = supplierid
+
+
+
+class solditem(db.Model):
+    __tablename__ = 'solditem'
+    solditemid = db.Column(db.Integer, primary_key = True)
+    customerfirstname = db.Column(db.String())
+    customersurname = db.Column(db.String)
+    email = db.Column(db.String)
+    stockid = db.Column(
+        db.Integer,
+        db.ForeignKey('stock.stockid'),
+        nullable=False)
+    price = db.Column(db.Float)
+    supplierid = db.Column(
+        db.Integer,
+        db.ForeignKey('supplier.supplierid'),
+        nullable=False)
+
+
+
+
+
+    def __init__(self,customerfirstname, customersurname, email, stockid, price, supplierid):
+        self.customerfirstname = customerfirstname
+        self.customersurname = customersurname
+        self.email = email
+        self.stockid = stockid
+        self.price = price
+        self.supplierid = supplierid
+
+
+class listing(db.Model):
+        __tablename__ = 'listing'
+        listingid = db.Column(db.Integer, primary_key = True)
+        stockid = db.Column(
+            db.Integer,
+            db.ForeignKey('stock.stockid'),
+            nullable=False)
+        price = db.Column(db.Float)
+
+
+        def __init__(self, stockid, price):
+                self.stockid = stockid
+                self.price = price
+
+
+
+class User(db.Model, UserMixin):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(10), unique=True, nullable=False)
+    password = db.Column(db.String(10))
+    email = db.Column(db.String(), unique=True, nullable=False)
+    admin = db.Column(db.Integer, default=0)
+
+    def __init__(self, username, password, email, admin):
+        self.username = username
+        self.password = generate_password_hash(password)
+        self.email = email
+        self.admin = admin
+
+    def __repr__(self):
+            return f'<User {self.username}>'
+        #expires in 10 mins
+    def verify_password(self,pwd):
+            return check_password_hash(self.password,pwd)
+    def get_reset_password_token(self, expires_in=600):
+            return jwt.encode(
+                    {'reset_password': self.id, 'exp': time() + expires_in},
+                    app.config['SECRET_KEY'], algorithm='HS256')
+
+    @staticmethod
+    def verify_reset_password_token(token):
+            try:
+                id = jwt.decode(token, app.config['SECRET_KEY'],
+                                algorithms=['HS256'])['reset_password']
+            except:
+                return
+            return User.query.get(id)
 
 
 
@@ -209,14 +345,7 @@ def compilemonies():
 
         
         #class for supplier
-class supplier(db.Model):
-        __tablename__ = 'supplier'
-        supplierid = db.Column(db.Integer, primary_key = True)
-        suppliername = db.Column(db.String)
 
-
-        def __init__(self, suppliername):
-                self.suppliername = suppliername
     
 
 #add supplier. user can add a supplier and it is saved in the database
@@ -323,19 +452,6 @@ def searchsupplierresults(search):
                 return render_template('results.html', table=table)
 
 
-#customer class
-class customer(db.Model):
-    __tablename__ = 'customers'
-    customerid = db.Column(db.Integer, primary_key = True)
-    customerfirstname = db.Column(db.String)
-    customersurname = db.Column(db.String)
-    email = db.Column(db.String)
-
-    def __init__(self, customerfirstname, customersurname, email):
-        self.customerfirstname = customerfirstname
-        self.customersurname = customersurname
-        self.email = email
-    
 
 
 
@@ -391,36 +507,6 @@ def deletecustomer(customerid):
                 return 'Error deleting customer'.format(customerid=customerid)
 
 
-
-
-#stock class
-class stock(db.Model):
-    __tablename__ = 'stock'
-    stockid = db.Column(db.Integer, primary_key = True)
-    size = db.Column(db.String(3))
-    type = db.Column(db.String)
-    colour = db.Column(db.String)
-    brand = db.Column(db.String)
-    price = db.Column(db.Float)
-    material = db.Column(db.String)
-
-    supplierid = db.Column(
-        db.Integer,
-        db.ForeignKey('supplier.supplierid'),
-        nullable=False)
-
-
-
-
-
-    def __init__(self,size,type,colour,brand,price,material,supplierid):
-        self.size = size
-        self.type = type
-        self.colour = colour
-        self.brand = brand
-        self.price = price
-        self.material = material
-        self.supplierid = supplierid
 
 
 
@@ -547,35 +633,6 @@ def searchstockresults(search):
 
 
 
-
-
-class solditem(db.Model):
-    __tablename__ = 'solditem'
-    solditemid = db.Column(db.Integer, primary_key = True)
-    customerfirstname = db.Column(db.String())
-    customersurname = db.Column(db.String)
-    email = db.Column(db.String)
-    stockid = db.Column(
-        db.Integer,
-        db.ForeignKey('stock.stockid'),
-        nullable=False)
-    price = db.Column(db.Float)
-    supplierid = db.Column(
-        db.Integer,
-        db.ForeignKey('supplier.supplierid'),
-        nullable=False)
-
-
-
-
-
-    def __init__(self,customerfirstname, customersurname, email, stockid, price, supplierid):
-        self.customerfirstname = customerfirstname
-        self.customersurname = customersurname
-        self.email = email
-        self.stockid = stockid
-        self.price = price
-        self.supplierid = supplierid
 
 
 
@@ -868,19 +925,7 @@ def deleteuser(id):
                 return render_template('usererror.html')
 
 
-class listing(db.Model):
-        __tablename__ = 'listing'
-        listingid = db.Column(db.Integer, primary_key = True)
-        stockid = db.Column(
-            db.Integer,
-            db.ForeignKey('stock.stockid'),
-            nullable=False)
-        price = db.Column(db.Float)
 
-
-        def __init__(self, stockid, price):
-                self.stockid = stockid
-                self.price = price
     
 @app.route('/addlisting', methods=['GET', 'POST'])
 @login_required
@@ -991,17 +1036,6 @@ def alllisting():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
         form = RegisterForm()
@@ -1052,41 +1086,9 @@ def login():
 def get_user(id):
         return User.query.get(id)
 
-class User(db.Model, UserMixin):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(10), unique=True, nullable=False)
-    password = db.Column(db.String(10))
-    email = db.Column(db.String(), unique=True, nullable=False)
-    admin = db.Column(db.Integer, default=0)
 
-    def __init__(self, username, password, email, admin):
-        self.username = username
-        self.password = generate_password_hash(password)
-        self.email = email
-        self.admin = admin
-
-    def __repr__(self):
-            return f'<User {self.username}>'
-        #expires in 10 mins
-    def verify_password(self,pwd):
-            return check_password_hash(self.password,pwd)
-    def get_reset_password_token(self, expires_in=600):
-            return jwt.encode(
-                    {'reset_password': self.id, 'exp': time() + expires_in},
-                    app.config['SECRET_KEY'], algorithm='HS256')
-
-    @staticmethod
-    def verify_reset_password_token(token):
-            try:
-                id = jwt.decode(token, app.config['SECRET_KEY'],
-                                algorithms=['HS256'])['reset_password']
-            except:
-                return
-            return User.query.get(id)
 
 @app.route("/")
-#@login_required
 def index():
         return render_template('index.html')
 
@@ -1108,9 +1110,6 @@ from email1 import send_password_reset_email, send_email
 ###reset password
 @app.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
-        # if User.is_authenticated:
-        #         return redirect(url_for('index'))
-        
         form = ResetPasswordRequestForm()
         if form.validate_on_submit():
                 user = User.query.filter_by(email=form.email.data).first()
@@ -1193,63 +1192,8 @@ def not_found_error(error):
     return render_template('401.html')
 
 
-#stock page
-@app.route('/picturesstart', methods = ['GET', 'POST'])
-@login_required
-def picturesstart():
-        search = StockSearchForm(request.form)
-        if request.method == 'POST':
-                return searchstockresults(search)
-        return render_template('picturesstart.html', form=search)
 
 
 if __name__ == "__main__":
     app.run(debug=True)
 
-
-
-
-
-# @app.route('/deleteuser<int:id>', methods=['GET', 'POST'])
-# @login_required
-# def deleteuser(id):
-#         qry = db.session.query(User).filter(User.id==id)
-#         username = qry.first()
-#         if current_user.admin ==1:
-#                 if current_user.username != User.username:
-#                         form = DeleteUserForm(formdata=request.form, obj=username)
-#                         if request.method == 'POST' and form.validate():
-#                                 db.session.delete(username)
-#                                 db.session.commit()
-#                                 flash('User deleted succesfully!')
-#                                 return redirect('/userpage')
-#                         return render_template('deleteuser.html', form=form,User=User)
-#                 else:
-#                         return render_template('index.html')                     
-
-#         else:
-#                 return render_template('usererror.html')
-
-
-
-
-# #to delete user 
-# @app.route('/deleteuser<int:id>', methods=['GET', 'POST'])
-# @login_required
-# def deleteuser(id):
-#         qry = db.session.query(User).filter(User.id==id)
-#         username = qry.first()
-#         if current_user.admin ==1:
-#                 if current_user.id != id:
-#                         form = DeleteUserForm(formdata=request.form, obj=username)
-#                         if request.method == 'POST' and form.validate():
-#                                 db.session.delete(username)
-#                                 db.session.commit()
-#                                 flash('User deleted succesfully!')
-#                                 return redirect('/userpage')
-#                         return render_template('deleteuser.html', form=form,User=User)
-#                 else:
-#                         return render_template('index.html')                     
-
-#         else:
-#                 return render_template('usererror.html')

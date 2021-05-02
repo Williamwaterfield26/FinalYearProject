@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, PasswordField, SubmitField, HiddenField, IntegerField, FloatField, SelectField, Form
 from wtforms.validators import DataRequired, InputRequired, Length, Regexp, NumberRange, Email, EqualTo
 from wtforms.fields.html5 import EmailField
-#from app import db
+
 
 
 
@@ -303,26 +303,13 @@ class ResetPasswordRequestForm(FlaskForm):
 
 
 class ResetPasswordForm(FlaskForm):
-    # password = PasswordField('New Password', [InputRequired(), EqualTo('confirm', message='Passwords must match')])
-    # confirm  = PasswordField('Repeat Password')
-
-
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Request Password Reset')
 
 
-        # password = PasswordField('Password', validators=[DataRequired(),EqualTo('password2',
-        #     message="Passwords must match")])
 
-
-# ##reset monday
-# class ForgotForm(FlaskForm):
-#     email = StringField('Email',validators = [DataRequired(), Email()])
-#     # email = StringField('Email',
-#     # validators.DataRequired(), validators.Email()]
-#     # )
 
 class PasswordResetForm(FlaskForm):
     current_password = PasswordField('Current Password', [validators.DataRequired()]
