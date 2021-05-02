@@ -470,7 +470,7 @@ def addcustomer():
                 record = customer(customerfirstname,customersurname,email)
                 db.session.add(record)
                 db.session.commit()
-                message = f"The Customer has been submitted"
+                flash("The Customer has been submitted")
                 return redirect(url_for('customerpage'))
 
         else:
@@ -529,7 +529,7 @@ def addstock():
                 record = stock(size,type,colour,brand,price,material,supplierid)
                 db.session.add(record)
                 db.session.commit()
-                message = f"The Stock has been submitted"
+                flash("The Stock has been submitted")
                 return redirect(url_for('stockpage'))
         else:
                 #show validation
@@ -649,6 +649,7 @@ def addsolditem():
                 customerfirstname = request.form['customerfirstname']
                 customersurname = request.form['customersurname']
                 email = request.form['email']
+                customerid = request.form['customerid']
                 stockid = request.form['stockid']
                 price = request.form['price']
                 supplierid = request.form['supplierid']

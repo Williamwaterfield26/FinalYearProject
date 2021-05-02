@@ -33,7 +33,6 @@ class AddSoldItemForm(FlaskForm):
     ])
     email = EmailField('Email',[InputRequired(),
     ])
-    # customerid = SelectField('customerid', choices=[])
     stockid = SelectField('stockid', choices=[])
     price = FloatField('Price', [InputRequired(),
     NumberRange(min=1.00, message= "Invalid Price Range. Please enter a price of at least £1"),
@@ -45,7 +44,6 @@ class DeleteSoldItemForm(FlaskForm):
     customerfirstname =StringField('Customer Firstname')
     customersurname = StringField('Customer Surname')
     email = EmailField('Email')
-    # customerid = SelectField('customerid', choices=[])
     stockid = SelectField('stockid', choices=[])
     price = IntegerField('Price')
     supplierid = SelectField('supplierid', choices=[])
@@ -75,7 +73,6 @@ class EditSoldItemForm(FlaskForm):
     ])
     email = EmailField('Email',[InputRequired(),
     ])
-    # customerid = SelectField('customerid', choices=[])
     stockid = SelectField('stockid', choices=[])
     price = FloatField('Price', [InputRequired(),
     NumberRange(min=1.00, message= "Invalid Price Range. Please enter a price of at least £1"),

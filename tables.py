@@ -45,6 +45,7 @@ class SoldItemResults(Table):
         solditemid = Col('Sold Item ID', show=False)
         customerfirstname= Col('Customer Firstname')
         customersurname= Col('Customer Surname')
+        customerid= Col('Customer ID')
         email = Col('Email')
         stockid = Col('Stock ID')
         price = Col('Price')
