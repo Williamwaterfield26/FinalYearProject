@@ -327,8 +327,8 @@ def searchsupplierresults(search):
 class customer(db.Model):
     __tablename__ = 'customers'
     customerid = db.Column(db.Integer, primary_key = True)
-    customerfirstname = db.Column(db.String(20))
-    customersurname = db.Column(db.String(20))
+    customerfirstname = db.Column(db.String)
+    customersurname = db.Column(db.String)
     email = db.Column(db.String)
 
     def __init__(self, customerfirstname, customersurname, email):
@@ -564,18 +564,18 @@ class solditem(db.Model):
         db.Integer,
         db.ForeignKey('supplier.supplierid'),
         nullable=False)
-    suppliername = db.Column(db.String)
 
 
 
-    def __init__(self,customerfirstname, customersurname, email, stockid, price, supplierid, suppliername):
+
+
+    def __init__(self,customerfirstname, customersurname, email, stockid, price, supplierid):
         self.customerfirstname = customerfirstname
         self.customersurname = customersurname
         self.email = email
         self.stockid = stockid
         self.price = price
         self.supplierid = supplierid
-        self.suppliername = suppliername
 
 
 
@@ -595,10 +595,9 @@ def addsolditem():
                 stockid = request.form['stockid']
                 price = request.form['price']
                 supplierid = request.form['supplierid']
-                suppliername = request.form['suppliername']
 
                 
-                record = solditem(customerfirstname, customersurname, email, stockid, price, supplierid, suppliername)
+                record = solditem(customerfirstname, customersurname, email, stockid, price, supplierid)
                 db.session.add(record)
                 db.session.commit()
                 flash("The Sold Item has been submitted")
@@ -684,7 +683,6 @@ def save_solditem(solditemid, form, new=False):
         solditemid.stockid = form.stockid.data
         solditemid.price = form.price.data
         solditemid.supplierid = form.supplierid.data
-        solditemid.suppliername = form.suppliername.data
         if new:
                 db.session.add(solditemid)
         db.session.commit()
@@ -798,11 +796,12 @@ def adduser():
                 username = form.username.data
                 password = form.password.data
                 email = form.email.data
+                admin = form.admin.data
 
         if form.validate_on_submit():
                 user = User.query.filter_by(username=username).first()
                 if not user:
-                        record = User(username=username, password=password, email=email)
+                        record = User(username=username, password=password, email=email, admin=admin)
                         db.session.add(record)
                         db.session.commit()
                 return redirect(url_for('userpage'))
@@ -819,16 +818,19 @@ def adduser():
 def edituser(id):
         qry = db.session.query(User).filter( User.id == id)
         username = qry.first()
-        if username:
-                form = EditUserForm(formdata=request.form, obj = username)
-                if request.method == 'POST' and form.validate():
-                        save_user(username,form)
+        if current_user.admin ==1:
+                if username:
+                        form = EditUserForm(formdata=request.form, obj = username)
+                        if request.method == 'POST' and form.validate():
+                                save_user(username,form)
 
-                        flash ('User updated!')
-                        return redirect ('/userpage')
-                return render_template('userpage.html', form=form)
+                                flash ('User updated!')
+                                return redirect ('/userpage')
+                        return render_template('userpage.html', form=form)
+                else:
+                        return 'Error loading the user'.format(id=id)
         else:
-                return 'Error loading the user'.format(id=id)
+                return render_template('nodelete.html')      
 
 
 
@@ -836,9 +838,10 @@ def edituser(id):
 def save_user(username, form, new=False):
         username.username = form.username.data
         username.email = form.email.data
+        username.admin = form.admin.data
 
         if new:
-                record = User(username= username, email= email)
+                record = User(username= username, email= email, admin=admin)
                 db.session.add(username)
         db.session.commit()
 
@@ -1057,10 +1060,11 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(), unique=True, nullable=False)
     admin = db.Column(db.Integer, default=0)
 
-    def __init__(self, username, password, email):
+    def __init__(self, username, password, email, admin):
         self.username = username
         self.password = generate_password_hash(password)
         self.email = email
+        self.admin = admin
 
     def __repr__(self):
             return f'<User {self.username}>'

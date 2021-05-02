@@ -5,7 +5,7 @@ from flask_table import Table, Col, LinkCol
 
 
 class CustomerResults(Table):
-        customerid = Col('Customerid', show = False)
+        customerid = Col('Customerid', show = True)
         customerfirstname = Col('Customerfirstname')
         customersurname = Col('Customersurname')
         email = Col('Email')
@@ -49,7 +49,6 @@ class SoldItemResults(Table):
         stockid = Col('Stock ID')
         price = Col('Price')
         supplierid = Col('Supplier ID')
-        suppliername = Col('Supplier Name')
         edit = LinkCol('Edit', 'editsolditem', url_kwargs=dict(solditemid='solditemid'))
         delete = LinkCol('Delete', 'deletesolditem', url_kwargs=dict(solditemid='solditemid'))
 

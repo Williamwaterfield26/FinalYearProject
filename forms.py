@@ -33,23 +33,22 @@ class AddSoldItemForm(FlaskForm):
     ])
     email = EmailField('Email',[InputRequired(),
     ])
+    # customerid = SelectField('customerid', choices=[])
     stockid = SelectField('stockid', choices=[])
     price = FloatField('Price', [InputRequired(),
     NumberRange(min=1.00, message= "Invalid Price Range. Please enter a price of at least £1"),
     ])
     supplierid = SelectField('supplierid', choices=[])
-    suppliername = StringField('Supplier Name', [InputRequired(),
-    ])
     submit = SubmitField('Add Sold Item')
 
 class DeleteSoldItemForm(FlaskForm):
     customerfirstname =StringField('Customer Firstname')
     customersurname = StringField('Customer Surname')
     email = EmailField('Email')
+    # customerid = SelectField('customerid', choices=[])
     stockid = SelectField('stockid', choices=[])
     price = IntegerField('Price')
     supplierid = SelectField('supplierid', choices=[])
-    suppliername = StringField('Supplier Name')
     delete = SubmitField('Delete')
 
 
@@ -76,13 +75,12 @@ class EditSoldItemForm(FlaskForm):
     ])
     email = EmailField('Email',[InputRequired(),
     ])
+    # customerid = SelectField('customerid', choices=[])
     stockid = SelectField('stockid', choices=[])
     price = FloatField('Price', [InputRequired(),
     NumberRange(min=1.00, message= "Invalid Price Range. Please enter a price of at least £1"),
     ])
     supplierid = SelectField('supplierid', choices=[])
-    suppliername = StringField('Supplier Name', [InputRequired(),
-    ])
     update =SubmitField('Update')
 
 
@@ -250,6 +248,9 @@ class EditUserForm(FlaskForm):
     ])
     email = StringField('Email',[InputRequired(),
     ])
+    admin = IntegerField('Admin',[InputRequired(),
+    NumberRange(min=0, max=1, message= "Invalid Admin. Please enter 1 for an admin or 0 for a non admin")
+    ])
     update = SubmitField('Update')
 
 class DeleteUserForm(FlaskForm):
@@ -289,6 +290,9 @@ class AddUserForm(FlaskForm):
     Length(min=1,max=10, message="Too many characters for your password")
     ])
     email = EmailField('Email',[InputRequired(),
+    ])
+    admin = IntegerField('Admin',[InputRequired(),
+    NumberRange(min=0, max=1, message= "Invalid Admin. Please enter 1 for an admin or 0 for a non admin")
     ])
     submit = SubmitField('Register')
 
