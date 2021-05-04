@@ -649,7 +649,6 @@ def addsolditem():
                 customerfirstname = request.form['customerfirstname']
                 customersurname = request.form['customersurname']
                 email = request.form['email']
-                customerid = request.form['customerid']
                 stockid = request.form['stockid']
                 price = request.form['price']
                 supplierid = request.form['supplierid']
