@@ -20,7 +20,7 @@ class SupplierResults(Table):
         delete = LinkCol('Delete', 'deletesupplier', url_kwargs=dict(supplierid='supplierid'))
         
 class ListingResults(Table):
-        listingid = Col('listingid', show= False)
+        listingid = Col('listingid', show= True)
         stockid = Col('Stockid')
         price = Col('Price')
         edit = LinkCol('Edit', 'editlisting', url_kwargs=dict(listingid='listingid'))
@@ -42,7 +42,7 @@ class StockResults(Table):
         delete = LinkCol('Delete', 'deletestock', url_kwargs=dict(stockid='stockid'))
 
 class SoldItemResults(Table):
-        solditemid = Col('Sold Item ID', show=False)
+        solditemid = Col('Sold Item ID', show=True)
         customerfirstname= Col('Customer Firstname')
         customersurname= Col('Customer Surname')
         email = Col('Email')
